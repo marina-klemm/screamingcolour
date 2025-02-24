@@ -30,17 +30,17 @@ Each directory contains images of 11 iconic Eras tour outfits in *high* and *med
         <th>Yellow</th>
     </tr>
     <tr>
-        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cropped/blue.jpg?raw=true" width="100"></td>
-        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cropped/blurple.jpg?raw=true" width="100"></td>
-        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cropped/cotton_candy.jpg?raw=true" width="100"></td>
-        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cropped/flamingo_pink.jpg?raw=true" width="100"></td>
-        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cropped/grapefruit.jpg?raw=true" width="100"></td>
-        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cropped/green.jpg?raw=true" width="100"></td>
-        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cropped/ocean_blue.jpg?raw=true" width="100"></td>
-        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cropped/pink.jpg?raw=true" width="100"></td>
-        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cropped/popsicle.jpg?raw=true" width="100"></td>
-        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cropped/sunset_orange.jpg?raw=true" width="100"></td>
-        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cropped/yellow.jpg?raw=true" width="100"></td>
+        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/blue.jpg?raw=true" width="100"></td>
+        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/blurple.jpg?raw=true" width="100"></td>
+        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/cotton_candy.jpg?raw=true" width="100"></td>
+        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/flamingo_pink.jpg?raw=true" width="100"></td>
+        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/grapefruit.jpg?raw=true" width="100"></td>
+        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/green.jpg?raw=true" width="100"></td>
+        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/ocean_blue.jpg?raw=true" width="100"></td>
+        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/pink.jpg?raw=true" width="100"></td>
+        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/popsicle.jpg?raw=true" width="100"></td>
+        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/sunset_orange.jpg?raw=true" width="100"></td>
+        <td><img src="https://github.com/cmjt/studyinswift/blob/main/dress_images/images_medium_res/yellow.jpg?raw=true" width="100"></td>
     </tr>
 </table>
 
