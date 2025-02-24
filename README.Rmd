@@ -43,8 +43,14 @@ knitr::opts_chunk$set(echo = TRUE)
     </tr>
 </table>
 
+### Distribution of Dresses
 
-```{r, collapse=TRUE}
+![](https://github.com/cmjt/studyinswift/blob/main/README_files/figure-markdown_strict/unnamed-chunk-1-1.png?raw=true)
+
+<details>
+  <summary>Plot code</summary>
+  
+```{r, message = FALSE, warning = FALSE, eval = FALSE}
 require(tidyverse)
 require(ggimage)
 surpriseSongsDressColours <- "raw_data/surprise_songs.xlsx"
@@ -102,5 +108,6 @@ ggplot(pianoSongsDataWithImages, aes(x = reorder(DressName, n), y = n, fill = Dr
     plot.title = element_text(hjust = 0.5)
   )
 
-
 ```
+
+</details>
