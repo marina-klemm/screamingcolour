@@ -1,0 +1,17 @@
+---
+title: 'She Painted All Our Nights: Colours of the Taylor Swift Universe'
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Abstract
+
+We investigate the relationship between Taylor Swift's wardrobe choices and her surprise song selection during the Eras Tour. Or, in a nutshell: could a Swiftie in the crowd reliably predict the mood of the surprise songs based on the color of Swift's dress? Drawing from a dataset of 147 concerts featuring 443 surprise songs and 11 iconic outfits (ranging from "Sunset orange" to "Blurple"), we employed transition rate analysis across the tour timeline. Our methodology combines quantitative analysis of dress-song pairings with sentiment analysis of color-related lyrics across Swift's studio albums (e.g., "lost in the gray", "the rest of the world was black and white"), creating our own "Swift's Dictionary of Colors". Using tokenized language processing for lyrical sentiment scoring, we found a clear relationship between color and sentiment in the Swiftverse, while also exploring interesting anomalies where colloquial color usage (e.g., "lavender haze") affects our models. In summary, we investigate whether Swift's dress colors for surprise songs were chosen at random and their connection to song sentiment - after all, she "showed us colours she knows we can't see with anyone else".
+
+
+## Decoding the Eras Tour dress palette
+
+## Taylor Swift's Sentiment Spectrum
