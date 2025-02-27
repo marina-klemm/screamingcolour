@@ -1,7 +1,7 @@
 ## Overview
 
 *Could a Swiftie in the crowd reliably predict the mood of the surprise
-songs based on the color of Swift’s dress?* Looking the relationship
+songs based on the color of Swift’s dress?* Looking at the relationship
 between Taylor Swift’s wardrobe choices and her surprise song selection
 during the Eras Tour.
 
@@ -81,14 +81,14 @@ Yellow
 </table>
 
 ### Distribution of Dresses
-
-![](https://github.com/cmjt/studyinswift/blob/main/README_files/figure-markdown_strict/unnamed-chunk-1-1.png?raw=true)
+![](https://github.com/cmjt/studyinswift/blob/main/README_files/figure-markdown_strict/unnamed-chunk-1-2.png?raw=true)
 
 <details>
 <summary>
 Plot code
 </summary>
 
+```r
     require(tidyverse)
     require(ggimage)
     surpriseSongsDressColours <- "raw_data/surprise_songs.xlsx"
@@ -140,7 +140,7 @@ pianoSongsData %>%
     )
   ) -> pianoSongsDataWithImages
 
-ggplot(pianoSongsDataWithImages, aes(x = reorder(DressName, -n), y = n, fill = DressName)) +
+dressVis <- ggplot(pianoSongsDataWithImages, aes(x = reorder(DressName, -n), y = n, fill = DressName)) +
   geom_bar(stat = "identity", width = 0.8) +  
   geom_image(
     aes(image = imagePath, y = n),  
@@ -171,6 +171,8 @@ ggplot(pianoSongsDataWithImages, aes(x = reorder(DressName, -n), y = n, fill = D
   ylim(0, 35)  # Increase limit to prevent text from the pink dress from being cropped
 
 
-   
+ggsave("README_files/figure-markdown_strict/unnamed-chunk-1-2.png", width=10, height=8)
 
+dressVis
+```
 </details>
