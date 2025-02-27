@@ -154,3 +154,196 @@ ggsave("README_files/figure-markdown_strict/unnamed-chunk-1-2.png", width=10, he
 dressVis
 ```
 </details>
+
+### Dress transitions and special events across the Eras Tour
+![](https://github.com/cmjt/studyinswift/blob/main/README_files/figure-markdown_strict/unnamed-chunk-1-3.png?raw=true)
+
+<details>
+<summary>
+Plot code
+</summary>
+
+```r
+# First, find the first date for each dress
+dress_first_appearance <- pianoSongsData %>%
+  group_by(DressName) %>%
+  summarize(FirstAppearance = min(Date)) %>%
+  arrange((FirstAppearance))
+
+# Convert DressName to a factor with ordered levels
+pianoSongsData$DressName <- factor(pianoSongsData$DressName, 
+                                   levels = dress_first_appearance$DressName)
+
+max_dress_level <- length(unique(pianoSongsData$DressName))
+
+ggplot(pianoSongsData, aes(x = Date, y = DressName, color = ColourHex1)) +
+  geom_point(size = 4, alpha = 0.5) +
+  scale_color_identity() +
+  theme_minimal() +
+  labs(
+    title = "Look What You Made Her Wear: Taylor's Eras Tour Color Story",
+    x = "",
+    y = ""
+  ) +
+  geom_rect(aes(xmin = as.Date("2023-08-28"), xmax = as.Date("2023-11-08"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +
+  geom_rect(aes(xmin = as.Date("2023-11-27"), xmax = as.Date("2024-02-06"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +  
+  geom_rect(aes(xmin = as.Date("2024-03-10"), xmax = as.Date("2024-05-08"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +
+  geom_rect(aes(xmin = as.Date("2024-08-21"), xmax = as.Date("2024-10-17"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +
+  # Vertical lines for the key events
+  geom_vline(xintercept = as.Date("2024-05-09"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2024-10-18"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2023-08-24"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2024-02-07"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2024-04-19"), linetype = "solid", color = "white", size=2) +
+  geom_vline(xintercept = as.Date("2023-07-07"), linetype = "solid", color = "purple", size =2) +
+  geom_vline(xintercept = as.Date("2023-10-27"), linetype = "solid", color = "blue", size =2) +
+  
+  # Text annotations for the events above
+  annotate("text", x = as.Date("2024-05-09"), y = max_dress_level, 
+           label = "Europe", color = "black", angle = -90, vjust = -1) +
+  annotate("text", x = as.Date("2024-10-18"), y = max_dress_level, 
+           label = "North \nAmerica", color = "black", angle = -90, vjust = -0.2) +
+  annotate("text", x = as.Date("2023-08-24"), y = max_dress_level, 
+           label = "Latin \nAmerica", color = "black", angle = -90, vjust = -0.2) +
+  annotate("text", x = as.Date("2024-02-07"), y = max_dress_level, 
+           label = "Asia/\nOceania", color = "black", angle = -90, vjust = -0.2) +
+  annotate("text", x = as.Date("2024-04-19"), y = max_dress_level, 
+           label = "TTPD", color = "white", angle = -90, vjust = -1, 
+           fontface = "bold") + ##this one is bold because white is hard to see, but TTPD IS white
+   annotate("text", x = as.Date("2023-07-07"), y = max_dress_level, 
+           label = "Speak\nNow TV", color = "purple", angle = -90, vjust = -0.2) +
+  annotate("text", x = as.Date("2023-10-27"), y = max_dress_level, 
+           label = "1989\nTV", color = "blue", angle = -90, vjust = -0.2) +
+  
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months") +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1, size = 12),
+        axis.text.y = element_text(size = 12),
+        plot.title = element_text(hjust=0.5, size = 14, margin = margin(b = 20), face = "bold"),
+        plot.margin = margin(t = 10, r = 10, b = 10, l = 10)
+        )
+```
+</details>
+
+## A Taylor Swift Dictionary of Colour
+![](https://github.com/cmjt/studyinswift/blob/main/README_files/figure-markdown_strict/unnamed-chunk-1-4.png?raw=true)
+
+<details>
+<summary>
+Plot code
+</summary>
+
+```r
+# First, create expanded dataset with separated colors and meanings
+rawColorData <- data.frame(
+  colour = trimws(unlist(strsplit(allSongsMetadata$colour_MK, ";"))),
+  meaning = trimws(unlist(strsplit(allSongsMetadata$colour_meaningMK, ";")))
+) %>%
+  filter(!is.na(colour) & !is.na(meaning))
+
+colorSentimentScores <- rawColorData %>%
+  mutate(
+    meaning = trimws(meaning),  
+    score = case_when(
+      tolower(meaning) == "positive" ~ 1,
+      tolower(meaning) == "neutral" ~ 0,
+      tolower(meaning) == "negative" ~ -1,
+      TRUE ~ NA_real_
+    )
+  )
+
+# Calculate average sentiment for each individual color
+individualColorSentiments <- colorSentimentScores %>%
+  group_by(colour) %>%
+  summarise(
+    avgSentiment = mean(score, na.rm = TRUE),
+    mentionCount = n()
+  ) %>%
+  ungroup()
+
+# Create color groups mapping dataset
+colorGroupMappings <- data.frame(
+  colour = names(colorGroups),
+  groupName = unlist(colorGroups)
+)
+
+# Calculate group-level sentiments
+colorGroupSentiments <- individualColorSentiments %>%
+  left_join(colorGroupMappings, by = "colour") %>%
+  group_by(groupName) %>%
+  summarise(
+    groupSentiment = mean(avgSentiment, na.rm = TRUE),
+    totalMentions = sum(mentionCount),
+    colorsInGroup = n()
+  ) %>%
+  arrange(desc(groupSentiment))
+
+# Print results
+print("Individual Color Sentiments:")
+print(individualColorSentiments %>% arrange(desc(avgSentiment)))
+
+print("\nColor Group Sentiments:")
+print(colorGroupSentiments)
+
+
+## Finally, look at it:
+# Create representative colors for each group
+groupColors <- c(
+  "purples" = "#8A2BE2",      # Using ultraviolet
+  "yellows" = "#FFD700",      # Using gold
+  "reds" = "#FF0000",         # Using red
+  "blues" = "#0000FF",        # Using blue
+  "greens" = "#008000",       # Using green
+  "colorful" = "#FF4500",     # Using rainbow
+  "black and white" = "#C0C0C0", # Using silver
+  "whites" = "#FFFFFF",       # Using white
+  "blacks" = "#000000"        # Using black
+)
+
+# Create the enhanced plot
+ggplot(colorGroupSentiments, 
+       aes(x = reorder(groupName, groupSentiment), 
+           y = groupSentiment,
+           fill = groupName)) +
+  geom_hline(yintercept = 0, 
+             linetype = "dashed", 
+             color = "gray50",
+             size = 0.3) +
+  geom_bar(stat = "identity", 
+           alpha = 0.8, 
+           width = 0.7,
+           color = "gray20",
+           size = 0.5) +
+  geom_text(aes(label = sprintf("%.2f", groupSentiment),
+                vjust = ifelse(groupSentiment >= 0, -0.5, 1.5)),
+            position = position_dodge(width = 0.7),
+            size = 4) +
+  scale_fill_manual(values = groupColors) +
+  labs(
+    title = "We Were Screaming Color",
+    subtitle = "Average Emotional Ratings of Color Groups in Swift's Lyrics",
+    x = NULL,
+    y = "Sentiment Score (-1 = Negative, 0 = Neutral, 1 = Positive)",
+    caption = paste("Analysis based on", nrow(rawColorData), "color mentions across 242 songs release to date")
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
+    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 11, vjust =1),
+    axis.text.y = element_text(size = 11),
+    legend.position = "none",
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.margin = margin(1, 1, 1, 1, "cm")
+  ) +
+  scale_y_continuous(
+    limits = c(-1.1, 1.1),
+    breaks = seq(-1, 1, 0.5)
+  )
+
+```
+</details>
