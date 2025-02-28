@@ -347,3 +347,57 @@ ggplot(colorGroupSentiments,
 
 ```
 </details>
+
+
+# Some surprise songs were always performed within a dress color group
+
+![](https://github.com/cmjt/studyinswift/blob/main/README_files/figure-markdown_strict/unnamed-chunk-1-5.png?raw=true)
+
+<details>
+<summary>
+Plot code
+</summary>
+
+```r
+# Step 1: Calculate which songs were performed with only one color group
+songs_with_single_color_group <- multiple_performances %>%
+  group_by(`Song title`) %>%
+  summarize(
+    total_performances = n(),
+    unique_color_groups = n_distinct(groupName),
+    color_group = first(groupName)  # The color group used (since there's only one)
+  ) %>%
+  filter(unique_color_groups == 1, total_performances > 1) %>%
+  arrange(desc(total_performances))
+
+# Step 2: Filter the dataset to include only these songs
+single_color_performances <- multiple_performances %>%
+  filter(`Song title` %in% songs_with_single_color_group$`Song title`)
+
+# Step 3: Cool! Now, visualize them:
+
+ggplot(single_color_performances, aes(x = reorder(`Song title`, table(single_color_performances$`Song title`)[`Song title`]), 
+                                      fill = DressName)) +
+  geom_bar() +
+  coord_flip() +
+  scale_fill_manual(values = colorPaletteDresses) +
+  labs(
+    title = "You Belong With Me: Songs That Found Their Perfect Color Match",
+    subtitle = paste0(nrow(songs_with_single_color_group), " surprise songs that were always performed within the dress' color group"),
+    x = "Song",
+    y = "Number of Performances",
+    fill = "Dress Color"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 12),
+    axis.text.x = element_text(size = 11),
+    axis.title = element_text(size = 13),
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 11),
+    legend.position = "bottom"
+  )
+```
+</details>
