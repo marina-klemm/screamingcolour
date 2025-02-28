@@ -401,3 +401,76 @@ ggplot(single_color_performances, aes(x = reorder(`Song title`, table(single_col
   )
 ```
 </details>
+
+
+# Was there a difference in the sentiment of songs played on each instrument?
+![](https://github.com/cmjt/studyinswift/blob/main/README_files/figure-markdown_strict/unnamed-chunk-1-6.png?raw=true)
+
+<details>
+<summary>
+Plot code
+</summary>
+
+```r
+# Let's examine both dataframes
+str(surpriseSongsDressColours)
+str(song_sentiment_scores)
+
+# First, ensure both datasets have a normalized song name column
+# For surpriseSongsDressColours
+if(!"normalizedSongName" %in% colnames(surpriseSongsDressColours)) {
+  surpriseSongsDressColours <- surpriseSongsDressColours %>%
+    mutate(normalizedSongName = tolower(gsub("[^[:alnum:]]", "", `Song title`)))
+}
+
+# For song_sentiment_scores
+song_sentiment_scores <- song_sentiment_scores %>%
+  mutate(normalizedSongName = tolower(gsub("[^[:alnum:]]", "", track_name)))
+
+# Now join using the normalized columns
+instrument_sentiment_comparison <- surpriseSongsDressColours %>%
+  left_join(song_sentiment_scores, by = "normalizedSongName") %>%
+  filter(!is.na(Instrument), !is.na(net_sentiment))
+
+# Create summary statistics by instrument
+instrument_sentiment_summary <- instrument_sentiment_comparison %>%
+  group_by(Instrument) %>%
+  summarize(
+    mean_sentiment = mean(net_sentiment, na.rm = TRUE),
+    median_sentiment = median(net_sentiment, na.rm = TRUE),
+    sd_sentiment = sd(net_sentiment, na.rm = TRUE),
+    n_songs = n(),
+    .groups = "drop"
+  )
+
+# Visualize the comparison
+ggplot(instrument_sentiment_comparison, aes(x = net_sentiment, fill = Instrument)) +
+  geom_density(alpha = 0.7) +
+  geom_vline(data = instrument_sentiment_summary,
+             aes(xintercept = mean_sentiment, color = Instrument),
+             linetype = "dashed", size = 1) +
+  scale_fill_manual(values = c("Piano" = "#89CFF0", "Guitar" = "#F7CAC9")) +
+  scale_color_manual(values = c("Piano" = "#0077BE", "Guitar" = "#E75480")) +
+  labs(
+    title = "Teardrops On My... Piano",
+    subtitle = "Comparing the emotional tone of Taylor's surprise songs by instrument",
+    x = "Net Sentiment Score",
+    y = "Density"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    axis.title = element_text(size = 12),
+    axis.text = element_text(size = 10),
+    legend.position = "bottom",
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  )
+
+# Step 5: Perform a statistical test to see if the difference is significant
+t_test_result <- t.test(net_sentiment ~ Instrument, data = instrument_sentiment_comparison)
+print(t_test_result)
+```
+
+</details>
