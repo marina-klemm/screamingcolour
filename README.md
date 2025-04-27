@@ -58,7 +58,150 @@ during the Eras Tour.
 </tr>
 </table>
 
-### Distribution of Dresses
+### Distribution of Dresses - Improved version
+![](https://github.com/cmjt/studyinswift/blob/main/README_files/figure-markdown_strict/Fig1.jpeg)
+<details>
+<summary>
+Plot code
+</summary>
+
+```r
+# Create the main timeline plot
+main_plot <- ggplot(oneRowPerConcert, aes(x = Date, y = DressName, color = ColourHex1)) +
+  geom_point(size = 4, alpha = 0.5) +
+  scale_color_identity() +
+  theme_minimal() +
+  labs(
+    title = "",
+    x = "",
+    y = ""
+  ) +
+  geom_rect(aes(xmin = as.Date("2023-08-28"), xmax = as.Date("2023-11-08"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +
+  geom_rect(aes(xmin = as.Date("2023-11-27"), xmax = as.Date("2024-02-06"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +  
+  geom_rect(aes(xmin = as.Date("2024-03-10"), xmax = as.Date("2024-05-08"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +
+  geom_rect(aes(xmin = as.Date("2024-08-21"), xmax = as.Date("2024-10-17"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +
+  # Vertical lines for the key events
+  geom_vline(xintercept = as.Date("2024-05-09"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2023-03-17"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2024-10-18"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2023-08-24"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2024-02-07"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2024-04-16"), linetype = "solid", color = "darkgray", size=2) + ## Changed to 16 (the right day is 19th) for vis requirements
+  geom_vline(xintercept = as.Date("2023-07-07"), linetype = "solid", color = "purple", size=2) +
+  geom_vline(xintercept = as.Date("2023-10-27"), linetype = "solid", color = "blue", size=2) +
+  
+  # Text annotations for the events above
+  annotate("text", x = as.Date("2024-05-09"), y = max_dress_level, 
+           label = "Europe¹", color = "black", angle = -90, vjust = -0.5, family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2023-03-17"), y = max_dress_level, 
+           label = "United\nStates¹", color = "black", angle = -90, vjust = -0.2, family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2024-10-18"), y = max_dress_level, 
+           label = "North \nAmerica¹", color = "black", angle = -90, vjust = -0.2,  family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2023-08-24"), y = max_dress_level, 
+           label = "Latin \nAmerica¹", color = "black", angle = -90, vjust = -0.2,  family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2024-02-07"), y = max_dress_level, 
+           label = "Asia/\nOceania¹", color = "black", angle = -90, vjust = -0.2,  family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2024-04-16"), y = max_dress_level, 
+           label = "TTPD²", color = "darkgray", angle = -90, vjust = -0.5,  family ="Gill Sans MT", size = 5, 
+           fontface = "bold") +
+  annotate("text", x = as.Date("2023-07-07"), y = max_dress_level, 
+           label = "Speak\nNow TV²", color = "purple", angle = -90, vjust = -0.2,  family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2023-10-27"), y = max_dress_level, 
+           label = "1989\nTV²", color = "blue", angle = -90, vjust = -0.2,  family ="Gill Sans MT", size = 5) +
+  
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months") +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1, size = 14),
+        axis.text.y = element_text(size = 14, hjust = 0),  # Set hjust=0 for left alignment
+        plot.title = element_text(hjust=0.5, size = 14, margin = margin(b = 20), face = "bold"),
+        plot.margin = margin(t = -7, r = 0, b = 10, l = 0),
+        text = element_text(color = "black", family = "Gill Sans MT", size = 14)) 
+
+# Create dress count plot (to go on the right side)
+# Ensure the dress order matches exactly with the main plot
+dress_levels <- levels(factor(oneRowPerConcert$DressName))
+oneRowPerConcertWithImages$DressName <- factor(oneRowPerConcertWithImages$DressName, levels = dress_levels)
+
+count_plot <- ggplot(oneRowPerConcertWithImages, aes(x = n, y = DressName, fill = DressName)) +
+  geom_bar(stat = "identity", width = 0.8) +
+  geom_image(
+    aes(image = imagePath, x = n),  
+    size = 0.09,                    
+    nudge_x = 2,
+    by = "height"                    
+  ) +
+  geom_text(
+    aes(x = n + 3, label = paste0(n, " (", round(percentage, 1), "%)")),  
+    hjust = 0,
+    nudge_x = 3,
+    color = "black",
+    size = 5,
+    family = "Gill Sans MT"
+  ) +
+  scale_fill_manual(values = colorPaletteDresses) +
+  theme_minimal() +
+  labs(
+    title = "",
+    x = "",
+    y = ""
+  ) +
+  theme(
+    axis.text.y = element_blank(),
+    axis.text.x = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = 12),
+    legend.position = "none",
+    plot.margin = margin(t = -7, r = 0, b = 10, l = 0),
+    text = element_text(color = "black", family = "Gill Sans MT", size = 14)
+  ) +
+  xlim(0, 50)   # Adjust limit to accommodate text and images
+
+  
+# Merge the plots using cowplot
+merged_plot <- plot_grid(
+  count_plot, main_plot,
+  ncol = 2,
+  align = "h",
+  axis = "tb",
+  rel_widths = c(1.5, 3)  # Adjust relative widths as needed
+)
+
+# Create title and subtitle with ggdraw
+title_with_subtitle <- ggdraw() + 
+  draw_label(
+    "She Was Screaming Color",
+    fontface = "bold",
+    size = 20,
+    #x = 0.5,
+    y = 0.55,
+    hjust = 0.5,
+    fontfamily = "Gill Sans MT" 
+  ) +
+  draw_label(
+    "Frequency and Timeline of Taylor Swift's Dress Colors Across Tour Legs¹ and Album Releases²",
+    fontface = "plain",
+    size = 16,
+  #  x = 0.5,
+    y = 0.1,
+    hjust = 0.5,
+    fontfamily = "Gill Sans MT" 
+  )
+
+# Then in your final plot assembly, replace the title component:
+final_plot <- plot_grid(
+  title_with_subtitle, merged_plot,
+  ncol = 1,
+  rel_heights = c(0.2, 2)  # Slightly increased height for title+subtitle
+)
+
+final_plot
+
+
+```
+</details>
+
 ![](https://github.com/cmjt/studyinswift/blob/main/README_files/figure-markdown_strict/unnamed-chunk-1-2.png?raw=true)
 
 <details>
