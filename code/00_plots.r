@@ -250,12 +250,16 @@ list <- split(join, join$groupName)
 for(i in 1:length(list)){
     set.seed(1984)
     png(paste(names(list)[i], ".png", sep = ""), bg = 'transparent' )
-     par(mar = c(0,0,0,0))
+    par(mar = c(0,0,0,0), mai = c(0,0,0,0))
     wordcloud(list[[i]]$colour, list[[i]]$mentionCount, min.freq = 0,
-              colors =  list[[i]]$colorPaletteColours, ordered.colors = TRUE)
+              colors =  list[[i]]$colorPaletteColours, ordered.colors = TRUE,
+              scale = c(4,2))
     dev.off()
 }
-                                      
+## cropping wordclouds
+image_filenames <- unlist(list.files(pattern = ".png"))
+require(GoodFibes)
+crop.stack(image_filenames, save.images = TRUE)
 library(packcircles)
 ## order by sentiment
 colorGroupSentiments <- colorGroupSentiments[order(colorGroupSentiments$totalMentions),]
@@ -275,7 +279,7 @@ coords$x[9] <- -10
 df.gg <- circleLayoutVertices(coords, npoints = 8)
 
 require(ggpattern)
-image_filenames <- unlist(list.files(pattern = ".png"))
+image_filenames <- unlist(list.files(pattern = "cropped"))
 ggplot()  +
     geom_segment(data = data.frame(xend = -15, yend = 0, x = 6, y = 0),
                  aes(x = x, y = y, xend = xend, yend = yend),
@@ -317,7 +321,97 @@ ggplot()  +
     theme_void() + theme(plot.margin = margin(t = 0, r = 0, b = 0, l = 0)) +
     annotate("text", x = -16, y = -5.75, label = "Negative", angle = 90)  +
     annotate("text", x = -16, y = 12.5, label = "Positive", angle = 90)  +
-    annotate("text", x = -16, y = 0, label = "Neutral", col = "grey", angle = 90)
+    annotate("text", x = -16, y = 0, label = "Neutral", col = "grey", angle = 90) 
 
+unlink("*.png")
 
 ggsave("../plots/colour_dictionary.png", bg = "white")
+
+
+##########################################
+###### Surprise Song Colour Group ########
+##########################################
+surpriseSongsDressColours$groupName <- sapply(surpriseSongsDressColours$DressName, function(color) {
+  if (color %in% c("Pink", "Flamingo pink")) return("reds")
+  if (color %in% c("Green")) return("greens")
+  if(color %in% c("Yellow", "Sunset orange")) return("yellows")
+  if (color %in% c("Ocean blue", "Blue", "Blurple")) return ("blues")
+  if (color %in% c("Popsicle", "Cotton candy", "Grapefruit")) return ("colorful")
+  return("Neutral")
+})
+
+songs_with_single_color_group <- surpriseSongsDressColours %>%
+  group_by(`Song title`) %>%
+  summarize(
+    total_performances = n(),
+    unique_color_groups = n_distinct(groupName),
+    color_group = first(groupName) 
+  ) %>%
+  filter(unique_color_groups == 1, total_performances > 1) %>%
+  arrange(desc(total_performances))
+
+single_color_performances <- surpriseSongsDressColours %>%
+    filter(`Song title` %in% songs_with_single_color_group$`Song title`)
+
+table(single_color_performances$DressName,single_color_performances$groupName)
+table(single_color_performances$groupName,single_color_performances$'Song title' )
+
+## pics
+blues <- paste("../dress_images/images_high_res/cropped/", c("blue", "ocean_blue"), ".jpg", sep = "")
+reds <- paste("../dress_images/images_high_res/cropped/", c("pink", "flamingo_pink"), ".jpg", sep = "")
+yellows <- paste("../dress_images/images_high_res/cropped/", c("yellow", "sunset_orange"), ".jpg", sep = "")
+
+coords <- circleProgressiveLayout(table(single_color_performances$groupName),
+                                  sizetype = 'area')
+df.gg <- circleLayoutVertices(coords, npoints = 8)
+snames <- single_color_performances %>% select('Song title', groupName) %>%
+    group_by(`Song title`) %>% mutate(count = n()) %>% ungroup() |> unique()
+## annoingly adhoc
+require(ggrepel)
+set.seed(1984) ## for jitter repel
+plot <- ggplot() + theme_void() +
+    ## blues
+    geom_polygon(data = df.gg[df.gg$id == 1,], aes(x = x, y = y),
+                 fill = "#0000FF", alpha = 0.05) +
+    geom_text_repel(aes(x = coords$x[1], 
+                        y = coords$y[1], 
+                        label = snames$`Song title`[snames$groupName == "blues"]),
+                    col = "#0000FF", nudge_y = -0.6, nudge_x = 0.3, segment.color = NA,
+                    size = 1.5*snames$count[snames$groupName == "blues"], box.padding = 0.5,
+                    family = "Gill Sans MT") +
+    ## reds
+    geom_polygon(data = df.gg[df.gg$id == 2,], aes(x = x, y = y),
+                 fill = "#FF0000", alpha = 0.05)  +
+    geom_text_repel(aes(x = coords$x[2], 
+                        y = coords$y[2], 
+                        label = snames$`Song title`[snames$groupName == "reds"]),
+                    col = "#FF0000", nudge_y = -0.8, nudge_x = 0.5, segment.color = NA,
+                    size = 1.5*snames$count[snames$groupName == "reds"], box.padding = 0.5,
+                    family = "Gill Sans MT") +
+    ## yellows
+    geom_polygon(data = df.gg[df.gg$id == 3,], aes(x = x, y = y),
+                 fill = "#FFD700", alpha = 0.05)  +
+    geom_text_repel(aes(x = coords$x[3], 
+                        y = coords$y[3], 
+                        label = snames$`Song title`[snames$groupName == "yellows"]),
+                    col = "#FFD700", nudge_y = 1, nudge_x = -0.6, segment.color = NA,
+                    size = 1.5*snames$count[snames$groupName == "yellows"], box.padding = 0.5,
+                    family = "Gill Sans MT")
+
+
+set.seed(1984) ## for jitter repel
+ggdraw() +
+    draw_plot(plot) +
+    draw_image(blues[1], -0.35, 0.2, scale = 0.3/2) +
+    draw_image(blues[2],  -0.2, 0.27, scale = 0.3/2) +
+    draw_image(reds[1], 0.08, 0.2, scale = 0.6/2) +
+    draw_image(reds[2],  0.3, 0.33, scale = 0.4/2) +
+    draw_image(yellows[1], -0.15, -0.31, scale = 0.5/2) +
+    draw_image(yellows[2],  0.05, -0.2, scale = 0.6/2) 
+   
+
+ggsave("../plots/surprise_colour_groups.png", bg = "white")
+
+##########################################
+###### Instrument Sentiment ##############
+##########################################
