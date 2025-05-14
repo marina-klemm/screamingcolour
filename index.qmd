@@ -1,0 +1,4 @@
+# Taylor Swift's Eras Tour Color-Music Relationships {.unnumbered}
+
+This is a short collection of visualization and `R`stats exercises exploring Taylor Swift's use of colour in her Eras tour outfits and her lyrics!
+

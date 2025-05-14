@@ -12,8 +12,11 @@ oneRowPerConcert <- surpriseSongsDressColours %>%
     ungroup()
 
 data <- data.frame(chain = oneRowPerConcert$DressName,
-                   leg = ifelse(oneRowPerConcert$Legs %in% c("First leg", "Latin America", "Asia-Oceania"), "First",
+                   leg = ifelse(oneRowPerConcert$Legs %in% c("First leg", "Latin America", "Asia-Oceania"),
+                                "First",
                          ifelse(oneRowPerConcert$Legs == "European leg", "Europe", "Final")))
+
+
 ## Note that The Markov property is that the future state of a system depends only on its current state and is independent of its past history
 verifyMarkovProperty(data$chain) ## reject Markov property p-value 0.00912 overall?
 verifyMarkovProperty(data$chain[data$leg == "First"]) ## not really evidence against the Markov property p-value 0.0955
