@@ -195,7 +195,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul class="collapse">
   <li><a href="#a-chi2-test-for-the-transition-counts" id="toc-a-chi2-test-for-the-transition-counts" class="nav-link" data-scroll-target="#a-chi2-test-for-the-transition-counts"><span class="toc-section-number">1.3.1</span>  A <span class="math inline">\(\chi^2\)</span>-test for the transition counts</a></li>
   <li><a href="#a-randomisation-test" id="toc-a-randomisation-test" class="nav-link" data-scroll-target="#a-randomisation-test"><span class="toc-section-number">1.3.2</span>  A randomisation test</a></li>
-  <li><a href="#a-likelihood-ratio-test" id="toc-a-likelihood-ratio-test" class="nav-link" data-scroll-target="#a-likelihood-ratio-test"><span class="toc-section-number">1.3.3</span>  A likelihood ratio test!</a></li>
+  <li><a href="#a-likelihood-ratio-test" id="toc-a-likelihood-ratio-test" class="nav-link" data-scroll-target="#a-likelihood-ratio-test"><span class="toc-section-number">1.3.3</span>  A likelihood ratio test</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -763,9 +763,11 @@ data:  transitions(final_leg)
 X-squared = 17.337, df = 16, p-value = 0.3641</code></pre>
 </div>
 </div>
+<div class="cell">
 <div class="cell-output-display">
-<table class="table">
-<caption>Summary of the chi-squated tests on the transition matricies for each leg of the Eras tour.</caption>
+<div id="tbl-chisq" class="anchored">
+<table class="table table-sm table-striped">
+<caption>Table&nbsp;1.1: Summary of the chi-squared tests on the transition matricies for each leg of the Eras tour.</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;"></th>
@@ -796,6 +798,8 @@ X-squared = 17.337, df = 16, p-value = 0.3641</code></pre>
 </tbody>
 </table>
 </div>
+</div>
+</div>
 <p>Therefore, if our <span class="math inline">\(\chi^2\)</span> assumptions were met we might infer that there’s some evidence against the outfits for the European leg being random.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -811,7 +815,7 @@ X-squared = 17.337, df = 16, p-value = 0.3641</code></pre>
 <section id="a-randomisation-test" class="level3" data-number="1.3.2">
 <h3 data-number="1.3.2" class="anchored" data-anchor-id="a-randomisation-test"><span class="header-section-number">1.3.2</span> A randomisation test</h3>
 <p>If we’re not happy that our parametric assumptions are met then we can (<em>often</em>) fall back on simple resampling methods; basically simulating what would happen under chance alone and then comparing how our observed situation stack up!</p>
-<p>To begin with let’s use the <span class="math inline">\(\chi^2\)</span>-squared statistic to <em>represent</em> the transition matrix we observed for each leg (it is a valid metric comparing between what we expected under independence and what we observed). By using a randomisation test we can build up a sampling distribution of this chosen metric that represent what would happen under chance alone (i.e., without any assumptions about the shape of this distribution). Our observed statistics in this case are given in the first column of <span class="citation" data-cites="tab-chisq">(<a href="references.html#ref-tab-chisq" role="doc-biblioref"><strong>tab-chisq?</strong></a>)</span>.</p>
+<p>To begin with let’s use the <span class="math inline">\(\chi^2\)</span>-squared statistic to <em>represent</em> the transition matrix we observed for each leg (it is a valid metric comparing between what we expected under independence and what we observed). By using a randomisation test we can build up a sampling distribution of this chosen metric that represent what would happen under chance alone (i.e., without any assumptions about the shape of this distribution). Our observed statistics in this case are given in the first column of <a href="#tbl-chisq">Table&nbsp;<span>1.1</span></a>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="do">## create a function for the randomisation test using chi-sq</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="do">## on the transition matrix, using a for loop just bc</span></span>
@@ -858,43 +862,47 @@ X-squared = 17.337, df = 16, p-value = 0.3641</code></pre>
 </div>
 </div>
 </div>
-<p>But, we can actually use any metric we like in a randomisation test! For our example, the <span class="math inline">\(\chi^2\)</span> is a nice (<em>distance</em>) statistic because it considers all the transitions, but if we were particularly interested in consecutive repeated outfits (i.e., the diagonals of the transition matrix) we could look at those instead.</p>
-<p><span class="math inline">\(H_0 = \text{outfit sequence is random}\)</span> vs.&nbsp;<span class="math inline">\(H_1 = \text{number of consecutive repeated outfits (i.e., of the same type) is higher or lower than would likely occur by chance}\)</span>.</p>
+<p>But, we can actually use any metric we like in a randomisation test! For our example, the <span class="math inline">\(\chi^2\)</span> is a nice (<em>distance</em>) statistic because it considers all the transitions, but if we were particularly interested in, say, a particular transition (e.g., Yellow <span class="math inline">\(\rightarrow\)</span> Pink for the first leg) we could look at those instead.</p>
+<p><span class="math inline">\(H_0 = \text{A particular transition occured at random}\)</span></p>
+<p>vs.&nbsp;</p>
+<p><span class="math inline">\(H_1 = \text{A particular transition occured fewer or more times than expected}\)</span>.</p>
+<p>[Note: than expected means than was expected under chance alone.]</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="do">## create a new function for the randomisation test using the </span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="do">## diagonals of the transition matrix (i.e., consecutively repeated outfits)</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="do">## numbers of a particular transition (from --&gt; to)</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>randomisation <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">nreps =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">1984</span>){</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  sampling_dist <span class="ot">&lt;-</span> <span class="fu">numeric</span>(nreps)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed) </span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nreps) {</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>   sampling_dist[i] <span class="ot">&lt;-</span> <span class="fu">sample</span>(data) <span class="sc">|&gt;</span> <span class="fu">transitions</span>() <span class="sc">|&gt;</span> <span class="fu">diag</span>() <span class="sc">|&gt;</span> <span class="fu">sum</span>()</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(sampling_dist)</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>randomisation <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">from =</span> <span class="st">"Yellow"</span>, <span class="at">to =</span> <span class="st">"Pink"</span>, </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nreps =</span> <span class="dv">1000</span>, <span class="at">seed =</span> <span class="dv">1984</span>){</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  sampling_dist <span class="ot">&lt;-</span> <span class="fu">numeric</span>(nreps)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set.seed</span>(seed) </span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nreps) {</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>   sampling_dist[i] <span class="ot">&lt;-</span> (<span class="fu">sample</span>(data) <span class="sc">|&gt;</span> <span class="fu">transitions</span>())[from, to]</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="fu">return</span>(sampling_dist)</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Calculating a <em>two-sided</em> p-value.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="do">## first leg</span></span>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="do">## first leg, Yellow --&gt; Pink (default)</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>null_first <span class="ot">&lt;-</span> <span class="fu">randomisation</span>(first_leg)</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>obs_first <span class="ot">&lt;-</span> first_leg <span class="sc">|&gt;</span> <span class="fu">transitions</span>() <span class="sc">|&gt;</span> <span class="fu">diag</span>() <span class="sc">|&gt;</span> <span class="fu">sum</span>()</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>obs_first <span class="ot">&lt;-</span> (first_leg <span class="sc">|&gt;</span> <span class="fu">transitions</span>())[<span class="st">"Yellow"</span>, <span class="st">"Pink"</span>]</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">abs</span>(null_first <span class="sc">-</span> <span class="fu">mean</span>(null_first)) <span class="sc">&gt;=</span> <span class="fu">abs</span>(obs_first <span class="sc">-</span> <span class="fu">mean</span>(null_first)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.022</code></pre>
+<pre><code>[1] 0.199</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="do">## European leg</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>null_mid <span class="ot">&lt;-</span> <span class="fu">randomisation</span>(mid_leg)</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>obs_mid <span class="ot">&lt;-</span> <span class="fu">mean</span>(null_mid <span class="sc">&gt;=</span> mid_leg <span class="sc">|&gt;</span> <span class="fu">transitions</span>() <span class="sc">|&gt;</span> <span class="fu">diag</span>() <span class="sc">|&gt;</span> <span class="fu">sum</span>())</span>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="do">## European leg, Sunset orange --&gt; Flamingo pink</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>null_mid <span class="ot">&lt;-</span> <span class="fu">randomisation</span>(mid_leg, <span class="at">from =</span> <span class="st">"Sunset orange"</span>, <span class="at">to =</span> <span class="st">"Flamingo pink"</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>obs_mid <span class="ot">&lt;-</span> (mid_leg <span class="sc">|&gt;</span> <span class="fu">transitions</span>())[<span class="st">"Sunset orange"</span>, <span class="st">"Flamingo pink"</span>]</span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">abs</span>(null_mid <span class="sc">-</span> <span class="fu">mean</span>(null_mid)) <span class="sc">&gt;=</span> <span class="fu">abs</span>(obs_mid <span class="sc">-</span> <span class="fu">mean</span>(null_mid)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
+<pre><code>[1] 0.766</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Final leg</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>null_final <span class="ot">&lt;-</span> <span class="fu">randomisation</span>(final_leg)</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>obs_final <span class="ot">&lt;-</span> <span class="fu">mean</span>(null_final <span class="sc">&gt;=</span> final_leg <span class="sc">|&gt;</span> <span class="fu">transitions</span>() <span class="sc">|&gt;</span> <span class="fu">diag</span>() <span class="sc">|&gt;</span> <span class="fu">sum</span>())</span>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Final leg, Blurple --&gt; Blurple</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>null_final <span class="ot">&lt;-</span> <span class="fu">randomisation</span>(final_leg, <span class="at">from =</span> <span class="st">"Blurple"</span>, <span class="at">to =</span> <span class="st">"Blurple"</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>obs_final <span class="ot">&lt;-</span> (final_leg <span class="sc">|&gt;</span> <span class="fu">transitions</span>())[<span class="st">"Blurple"</span>, <span class="st">"Blurple"</span>]</span>
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">abs</span>(null_final <span class="sc">-</span> <span class="fu">mean</span>(null_final)) <span class="sc">&gt;=</span> <span class="fu">abs</span>(obs_final <span class="sc">-</span> <span class="fu">mean</span>(null_final)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.035</code></pre>
+<pre><code>[1] 0.644</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -902,14 +910,353 @@ X-squared = 17.337, df = 16, p-value = 0.3641</code></pre>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="outfit_transitions_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
-<p></p><figcaption class="figure-caption">Sampling distribution of the test statistic (the number of consecutive outfits repeated) under the NULL hypothesis for each leg along with the observed test statistic in purple.</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Sampling distribution of the test statistic (the number of times a particular transition occured) under the NULL hypothesis for each leg along with the observed test statistic in purple.</figcaption><p></p>
 </figure>
 </div>
 </div>
 </div>
+<p>In each case, no evidence to suggest we see the particular transitions more or less frequently than would be expected under the NULL hypothesis of chance alone. (<em>Note the transitions were chosen arbitrarily</em>)</p>
 </section>
 <section id="a-likelihood-ratio-test" class="level3" data-number="1.3.3">
-<h3 data-number="1.3.3" class="anchored" data-anchor-id="a-likelihood-ratio-test"><span class="header-section-number">1.3.3</span> A likelihood ratio test!</h3>
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="a-likelihood-ratio-test"><span class="header-section-number">1.3.3</span> A likelihood ratio test</h3>
+<p>What about using a model based approach? If the outfits were <em>random</em> (given the choices) then we’d expect each to occur independently of one another (i.e., the chance of one outfit is independent of any other).</p>
+<p>Let’s consider the first leg, defining the <em>events</em> mathematically we let <span class="math inline">\(\{X_1, X_2, \ldots, X_n\}\)</span> be the outfits taking values in <span class="math inline">\(\{\text{Blue}, \text{Green}, \text{Pink}, \text{Yellow}\}\)</span> (i.e., four possible categories).</p>
+<p>If the outfits were independent then we can write the likelihood as</p>
+<p><span class="math display">\[L_0(p; x) = \prod_{t=1}^{n} P(X_t = x_t) = \prod_{j=1}^{4} p_j^{n_j}\]</span>.</p>
+<p>Here <span class="math inline">\(p_j\)</span> is the probability of observing category <span class="math inline">\(j\)</span>, <span class="math inline">\(n_j\)</span> is the number of times category <span class="math inline">\(j\)</span> appears from <span class="math inline">\(t=2\)</span> to <span class="math inline">\(n\)</span>, and <span class="math inline">\(\sum_{j=1}^{k} p_j = 1\)</span>. The log-likelihood is therefore <span class="math display">\[\log L_0(p;x) = \sum_{t=2}^{n} \log p_{x_t} = \sum_{j=1}^{4} n_j \log p_j\]</span>.</p>
+<p>Calculating this in <code>R</code> <em>step-by-step</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(first_leg)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>n</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 81</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(first_leg))</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>k</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>chain <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(first_leg)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>chain</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] Pink   Green  Pink   Green  Green  Pink   Yellow Pink   Green  Yellow
+[11] Pink   Green  Green  Pink   Yellow Pink   Green  Yellow Pink   Yellow
+[21] Green  Yellow Green  Pink   Pink   Green  Yellow Pink   Green  Yellow
+[31] Pink   Yellow Yellow Pink   Green  Pink   Pink   Yellow Yellow Pink  
+[41] Green  Pink   Pink   Yellow Pink   Pink   Pink   Pink   Yellow Green 
+[51] Blue   Blue   Pink   Green  Yellow Blue   Pink   Yellow Yellow Blue  
+[61] Green  Blue   Yellow Green  Blue   Yellow Pink   Green  Yellow Pink  
+[71] Blue   Pink   Blue   Yellow Green  Yellow Green  Pink   Pink   Yellow
+[81] Blue  
+Levels: Blue Green Pink Yellow</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>p_indep <span class="ot">&lt;-</span> <span class="fu">table</span>(chain) <span class="sc">/</span> n</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>p_indep <span class="do">## independent probabilities</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>chain
+     Blue     Green      Pink    Yellow 
+0.1111111 0.2469136 0.3580247 0.2839506 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>p_indep[<span class="fu">as.integer</span>(chain)] <span class="do">## probabilities of each element as they occur</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>chain
+     Pink     Green      Pink     Green     Green      Pink    Yellow      Pink 
+0.3580247 0.2469136 0.3580247 0.2469136 0.2469136 0.3580247 0.2839506 0.3580247 
+    Green    Yellow      Pink     Green     Green      Pink    Yellow      Pink 
+0.2469136 0.2839506 0.3580247 0.2469136 0.2469136 0.3580247 0.2839506 0.3580247 
+    Green    Yellow      Pink    Yellow     Green    Yellow     Green      Pink 
+0.2469136 0.2839506 0.3580247 0.2839506 0.2469136 0.2839506 0.2469136 0.3580247 
+     Pink     Green    Yellow      Pink     Green    Yellow      Pink    Yellow 
+0.3580247 0.2469136 0.2839506 0.3580247 0.2469136 0.2839506 0.3580247 0.2839506 
+   Yellow      Pink     Green      Pink      Pink    Yellow    Yellow      Pink 
+0.2839506 0.3580247 0.2469136 0.3580247 0.3580247 0.2839506 0.2839506 0.3580247 
+    Green      Pink      Pink    Yellow      Pink      Pink      Pink      Pink 
+0.2469136 0.3580247 0.3580247 0.2839506 0.3580247 0.3580247 0.3580247 0.3580247 
+   Yellow     Green      Blue      Blue      Pink     Green    Yellow      Blue 
+0.2839506 0.2469136 0.1111111 0.1111111 0.3580247 0.2469136 0.2839506 0.1111111 
+     Pink    Yellow    Yellow      Blue     Green      Blue    Yellow     Green 
+0.3580247 0.2839506 0.2839506 0.1111111 0.2469136 0.1111111 0.2839506 0.2469136 
+     Blue    Yellow      Pink     Green    Yellow      Pink      Blue      Pink 
+0.1111111 0.2839506 0.3580247 0.2469136 0.2839506 0.3580247 0.1111111 0.3580247 
+     Blue    Yellow     Green    Yellow     Green      Pink      Pink    Yellow 
+0.1111111 0.2839506 0.2469136 0.2839506 0.2469136 0.3580247 0.3580247 0.2839506 
+     Blue 
+0.1111111 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>p_indep[<span class="fu">as.integer</span>(chain)] <span class="sc">|&gt;</span> <span class="fu">log</span>() <span class="do">## log probabilities of each element as they occur</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>chain
+     Pink     Green      Pink     Green     Green      Pink    Yellow      Pink 
+-1.027153 -1.398717 -1.027153 -1.398717 -1.398717 -1.027153 -1.258955 -1.027153 
+    Green    Yellow      Pink     Green     Green      Pink    Yellow      Pink 
+-1.398717 -1.258955 -1.027153 -1.398717 -1.398717 -1.027153 -1.258955 -1.027153 
+    Green    Yellow      Pink    Yellow     Green    Yellow     Green      Pink 
+-1.398717 -1.258955 -1.027153 -1.258955 -1.398717 -1.258955 -1.398717 -1.027153 
+     Pink     Green    Yellow      Pink     Green    Yellow      Pink    Yellow 
+-1.027153 -1.398717 -1.258955 -1.027153 -1.398717 -1.258955 -1.027153 -1.258955 
+   Yellow      Pink     Green      Pink      Pink    Yellow    Yellow      Pink 
+-1.258955 -1.027153 -1.398717 -1.027153 -1.027153 -1.258955 -1.258955 -1.027153 
+    Green      Pink      Pink    Yellow      Pink      Pink      Pink      Pink 
+-1.398717 -1.027153 -1.027153 -1.258955 -1.027153 -1.027153 -1.027153 -1.027153 
+   Yellow     Green      Blue      Blue      Pink     Green    Yellow      Blue 
+-1.258955 -1.398717 -2.197225 -2.197225 -1.027153 -1.398717 -1.258955 -2.197225 
+     Pink    Yellow    Yellow      Blue     Green      Blue    Yellow     Green 
+-1.027153 -1.258955 -1.258955 -2.197225 -1.398717 -2.197225 -1.258955 -1.398717 
+     Blue    Yellow      Pink     Green    Yellow      Pink      Blue      Pink 
+-2.197225 -1.258955 -1.027153 -1.398717 -1.258955 -1.027153 -2.197225 -1.027153 
+     Blue    Yellow     Green    Yellow     Green      Pink      Pink    Yellow 
+-2.197225 -1.258955 -1.398717 -1.258955 -1.398717 -1.027153 -1.027153 -1.258955 
+     Blue 
+-2.197225 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>ll0 <span class="ot">&lt;-</span> p_indep[<span class="fu">as.integer</span>(chain)] <span class="sc">|&gt;</span> <span class="fu">log</span>() <span class="sc">|&gt;</span> <span class="fu">sum</span>() <span class="do">## log likelihood</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>ll0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -106.4928</code></pre>
+</div>
+</div>
+<p>Now, what about the likelihood if we assume the sequence of outfits is a first-order Markov chain (i.e., the current outfit <span class="math inline">\(X_t\)</span> depends on the previous one <span class="math inline">\(X_{t-1}\)</span>):</p>
+<p><span class="math display">\[P(X_t = x_t \mid X_{t-1} = x_{t-1}) = P_{x_{t-1}, x_t}.\]</span></p>
+<p>Here <span class="math inline">\(P_{i,j}\)</span> is the probability of transitioning from state <span class="math inline">\(i\)</span> to state <span class="math inline">\(j\)</span>, again with <span class="math inline">\(\sum_{j=1}^{k} P_{i,j} = 1 \quad \text{for all } i\)</span>. We can write the likelihood as</p>
+<p><span class="math display">\[L_1(p;x_t|x_{t-1}) = \prod_{t=2}^{n} P(X_t = x_t \mid X_{t-1} = x_{t-1}) = \prod_{i=1}^{k} \prod_{j=1}^{k} P_{i,j}^{N_{i,j}}\]</span></p>
+<p>Where <span class="math inline">\(N_{i,j}\)</span> is the number of transitions from state <span class="math inline">\(i\)</span> to state <span class="math inline">\(j\)</span>. The log-likelihood is then</p>
+<p><span class="math display">\[\log(L_1(p;x_t|x_{t-1})) = \sum_{t=2}^{n} \log (P_{x_{t-1}, x_t}) = \sum_{i=1}^{k} \sum_{j=1}^{k} N_{i,j} \log (P_{i,j})\]</span></p>
+<p>Calculating this in <code>R</code> <em>step-by-step</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="do">## transition probability matrix</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>tm <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(<span class="fu">transitions</span>(first_leg), <span class="dv">1</span>) <span class="do">## over rows</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>tm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        
+               Blue      Green       Pink     Yellow
+  Blue   0.12500000 0.12500000 0.37500000 0.37500000
+  Green  0.15000000 0.10000000 0.35000000 0.40000000
+  Pink   0.06896552 0.37931034 0.24137931 0.31034483
+  Yellow 0.13043478 0.26086957 0.47826087 0.13043478</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="do">## using a for loop</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>ll1 <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="do">## initialise</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n){</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  lli <span class="ot">&lt;-</span> <span class="fu">log</span>(tm[chain[i<span class="dv">-1</span>], chain[i]]) <span class="do">## element of tm</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  ll1 <span class="ot">&lt;-</span> ll1 <span class="sc">+</span> lli</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>ll1 <span class="do">## log likelihood assuming a first-order Markov chain</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -99.9088</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="do">## we can benchmark using the markovchain package </span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>markovchain<span class="sc">::</span><span class="fu">markovchainFit</span>(<span class="at">data =</span> first_leg, <span class="at">method =</span> <span class="st">"mle"</span>)<span class="sc">$</span>logLikelihood</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -99.9088</code></pre>
+</div>
+</div>
+<p>Construction a likelihood ratio test statistic</p>
+<p><span class="math display">\[\Lambda = 2 \left( \log(L_1(p;x_t|x_{t-1}))  - \log(L_0(p; x)) \right)\]</span></p>
+<p>Under the NULL hypothesis <span class="math inline">\(H_0\)</span>, the test statistic <span class="math inline">\(\Lambda\)</span> asymptotically follows a <span class="math inline">\(\chi^2\)</span> distribution with degrees of freedom <span class="math inline">\(\text{df} = (k - 1)^2\)</span>.</p>
+<p>In <code>R</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>delta <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> (ll1 <span class="sc">-</span> ll0)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> (k <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>p_val <span class="ot">&lt;-</span> <span class="fu">pchisq</span>(delta, df, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>No evidence against the outfits being independent.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="outfit_transitions_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Distribution of the test statistic under the NULL hypothesis, the observed value shown in purple.</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>So, let’s make a function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>lrt <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">plot =</span> <span class="cn">FALSE</span>){</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="do">## under H0</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x)</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(x))</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  chain <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(x)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>  p_indep <span class="ot">&lt;-</span> <span class="fu">table</span>(chain) <span class="sc">/</span> n</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>  ll0 <span class="ot">&lt;-</span> p_indep[<span class="fu">as.integer</span>(chain)] <span class="sc">|&gt;</span> <span class="fu">log</span>() <span class="sc">|&gt;</span> <span class="fu">sum</span>() </span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>  <span class="do">## first-order Markov</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>  tm <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(<span class="fu">transitions</span>(x), <span class="dv">1</span>) </span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>  ll1 <span class="ot">&lt;-</span> <span class="dv">0</span> </span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n){</span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>    lli <span class="ot">&lt;-</span> <span class="fu">log</span>(tm[chain[i<span class="dv">-1</span>], chain[i]]) </span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>    ll1 <span class="ot">&lt;-</span> ll1 <span class="sc">+</span> lli</span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a>  <span class="do">## test statistic</span></span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>  delta <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> (ll1 <span class="sc">-</span> ll0)</span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> (k <span class="sc">-</span> <span class="dv">1</span>)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a>  p_val <span class="ot">&lt;-</span> <span class="fu">pchisq</span>(delta, df, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-19"><a href="#cb56-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(plot){</span>
+<span id="cb56-20"><a href="#cb56-20" aria-hidden="true" tabindex="-1"></a>    chi <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">30</span>, <span class="at">length.out =</span> <span class="dv">100</span>))</span>
+<span id="cb56-21"><a href="#cb56-21" aria-hidden="true" tabindex="-1"></a>    chi<span class="sc">$</span>density <span class="ot">&lt;-</span> <span class="fu">dchisq</span>(chi<span class="sc">$</span>x, <span class="at">df =</span> df)</span>
+<span id="cb56-22"><a href="#cb56-22" aria-hidden="true" tabindex="-1"></a>    chi <span class="sc">%&gt;%</span></span>
+<span id="cb56-23"><a href="#cb56-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> density)) <span class="sc">+</span></span>
+<span id="cb56-24"><a href="#cb56-24" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb56-25"><a href="#cb56-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_vline</span>(<span class="fu">aes</span>(<span class="at">xintercept =</span> delta), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"purple"</span>) <span class="sc">+</span></span>
+<span id="cb56-26"><a href="#cb56-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">""</span>,<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">""</span>) <span class="sc">+</span> <span class="fu">theme_bw</span>() <span class="ot">-&gt;</span> p</span>
+<span id="cb56-27"><a href="#cb56-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(p)</span>
+<span id="cb56-28"><a href="#cb56-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb56-29"><a href="#cb56-29" aria-hidden="true" tabindex="-1"></a>  <span class="do">## info to return</span></span>
+<span id="cb56-30"><a href="#cb56-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="st">"ll0"</span> <span class="ot">=</span> ll0,</span>
+<span id="cb56-31"><a href="#cb56-31" aria-hidden="true" tabindex="-1"></a>              <span class="st">"ll1"</span> <span class="ot">=</span> ll1,</span>
+<span id="cb56-32"><a href="#cb56-32" aria-hidden="true" tabindex="-1"></a>              <span class="st">"delta"</span> <span class="ot">=</span> delta,</span>
+<span id="cb56-33"><a href="#cb56-33" aria-hidden="true" tabindex="-1"></a>              <span class="st">"df"</span> <span class="ot">=</span> df,</span>
+<span id="cb56-34"><a href="#cb56-34" aria-hidden="true" tabindex="-1"></a>              <span class="st">"p.val"</span> <span class="ot">=</span> p_val))</span>
+<span id="cb56-35"><a href="#cb56-35" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb56-36"><a href="#cb56-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-37"><a href="#cb56-37" aria-hidden="true" tabindex="-1"></a><span class="fu">lrt</span>(first_leg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$ll0
+[1] -106.4928
+
+$ll1
+[1] -99.9088
+
+$delta
+[1] 13.16793
+
+$df
+[1] 9
+
+$p.val
+[1] 0.1551535</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrt</span>(mid_leg, <span class="at">plot =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="outfit_transitions_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$ll0
+[1] -52.30575
+
+$ll1
+[1] -39.26825
+
+$delta
+[1] 26.075
+
+$df
+[1] 4
+
+$p.val
+[1] 3.056156e-05</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lrt</span>(final_leg, <span class="at">plot =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="outfit_transitions_files/figure-html/unnamed-chunk-22-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$ll0
+[1] -26.26847
+
+$ll1
+[1] -14.04639
+
+$delta
+[1] 24.44415
+
+$df
+[1] 16
+
+$p.val
+[1] 0.08024261</code></pre>
+</div>
+</div>
+<p><strong>First order Markov chain?</strong></p>
+<p>So, might we believe that for the European leg of her tour Swift’s outfits weren’t random and perhaps what she wore one night depended on her outfit the previous night (i.e., in stats speak followed a first-order Markov chain)?</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Basically, the first-order Markov property is that the future state of a system depends only on its current state and is independent of its past history.</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(markovchain)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">verifyMarkovProperty</span>(mid_leg) <span class="do">## no evidence against the Markov property p-value 0.834 (~likely a Markov chain?)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Testing markovianity property on given data sequence
+Chi - square statistic is: 7.339583 
+Degrees of freedom are: 12 
+And corresponding p-value is: 0.8343811 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">markovchainFit</span>(<span class="at">data =</span> mid_leg, <span class="at">method =</span> <span class="st">"mle"</span>) <span class="do">## as above but with ses :)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$estimate
+MLE Fit 
+ A  3 - dimensional discrete Markov Chain defined by the following states: 
+ Flamingo pink, Ocean blue, Sunset orange 
+ The transition matrix  (by rows)  is defined as follows: 
+              Flamingo pink Ocean blue Sunset orange
+Flamingo pink    0.06666667  0.2666667     0.6666667
+Ocean blue       0.57142857  0.0000000     0.4285714
+Sunset orange    0.27777778  0.5555556     0.1666667
+
+
+$standardError
+              Flamingo pink Ocean blue Sunset orange
+Flamingo pink    0.06666667  0.1333333    0.21081851
+Ocean blue       0.20203051  0.0000000    0.17496355
+Sunset orange    0.12422600  0.1756821    0.09622504
+
+$confidenceLevel
+[1] 0.95
+
+$lowerEndpointMatrix
+              Flamingo pink  Ocean blue Sunset orange
+Flamingo pink    0.00000000 0.005338081    0.25346989
+Ocean blue       0.17545597 0.000000000    0.08564909
+Sunset orange    0.03429924 0.211224910    0.00000000
+
+$upperEndpointMatrix
+              Flamingo pink Ocean blue Sunset orange
+Flamingo pink     0.1973310  0.5279953     1.0000000
+Ocean blue        0.9674012  0.0000000     0.7714938
+Sunset orange     0.5212563  0.8998862     0.3552643
+
+$logLikelihood
+[1] -39.26825</code></pre>
+</div>
+</div>
+<p>What about 1st vs 2nd Markov Chain</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Let's trick markovchain into doing this for us</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="do">## by creating a "first order" chain which is actually of order 2</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>snap <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">current =</span> mid_leg)</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>snap<span class="sc">$</span>future <span class="ot">&lt;-</span> <span class="fu">lead</span>(snap<span class="sc">$</span>current, <span class="dv">1</span>)</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>snap<span class="sc">$</span>past <span class="ot">&lt;-</span> <span class="fu">lag</span>(snap<span class="sc">$</span>current, <span class="dv">1</span>)</span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>sec_order <span class="ot">&lt;-</span> snap <span class="sc">|&gt;</span></span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(future) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(past)) <span class="sc">%&gt;%</span></span>
+<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">unite</span>(<span class="st">"y_current"</span>, <span class="fu">c</span>(<span class="st">"past"</span>, <span class="st">"current"</span>), <span class="at">remove =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y_next =</span> <span class="fu">lead</span>(y_current, <span class="dv">1</span>),</span>
+<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">y_previous =</span> <span class="fu">lag</span>(y_current, <span class="dv">1</span>))</span>
+<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>ll1 <span class="ot">&lt;-</span> <span class="fu">markovchainFit</span>(<span class="at">data =</span> mid_leg, <span class="at">method =</span> <span class="st">"mle"</span>)<span class="sc">$</span>logLikelihood</span>
+<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a>ll1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -39.26825</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>ll2 <span class="ot">&lt;-</span> <span class="fu">markovchainFit</span>(<span class="at">data =</span> sec_order<span class="sc">$</span>y_current, <span class="at">method =</span> <span class="st">"mle"</span>)<span class="sc">$</span>logLikelihood</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>ll2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -32.29189</code></pre>
+</div>
+</div>
+<div class="cell">
+
+</div>
 
 
 </section>

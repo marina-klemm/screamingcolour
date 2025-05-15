@@ -32,7 +32,7 @@ steadyStates(mid)
 end <- createSequenceMatrix(data$chain[data$leg == "Final"], toRowProbs = TRUE) |> as("markovchain")
 end |> plot(edge.arrow.size = 0.2)
 steadyStates(end)
-mc_fit = markovchainFit(data = data$chain[data$leg == "Final"], method = "mle")
+mc_fit = markovchainFit(data = data$chain[data$leg == "First"], method = "mle")
 mc_fit
 states <- mc_fit$estimate@states
 transition_data <- expand.grid(From = states, To = states)
