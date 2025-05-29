@@ -1,0 +1,63 @@
+# Data wrangling
+
+:::{.callout-note}
+All data paths are relative to the root of [the GitHub repository](https://github.com/cmjt/studyinswift)
+:::
+
+```{r, message = FALSE}
+## packages 
+require(tidyverse)
+require(readxl)
+```
+
+```{r, message = FALSE}
+## reading in data
+surpriseSongsDressColours <-  readxl::read_excel("raw_data/surprise_songs.xlsx", sheet = "List")
+surpriseSongsDressColours$Date <- as.Date(surpriseSongsDressColours$Date)
+## map hex colour to outfit
+dressColorMapping <- unique(surpriseSongsDressColours %>% select(DressName, ColourHex1))
+colorPaletteDresses <- setNames(dressColorMapping$ColourHex1, dressColorMapping$DressName)
+pathToDressColours <- "dress_images/images_high_res/cropped/"
+```
+
+```{r, message = FALSE}
+## Need only consider first element of each concerts as the
+## same outfit was worn for all surprise songs
+## for anyone concert
+oneRowPerConcert <- surpriseSongsDressColours %>%
+    group_by(Date) %>%
+    arrange(Date, Order) %>% 
+    slice(1) %>%
+    ungroup()
+oneRowPerConcert
+```
+
+```{r, message = FALSE}
+## map outfits to the corresponding images
+oneRowPerConcert %>%
+    count(DressName) %>%
+    mutate(
+        percentage = n / sum(n) * 100,
+        imagePath = case_when(
+            DressName == "Pink" ~paste0(pathToDressColours, "pink.jpg"),
+            DressName == "Green" ~paste0(pathToDressColours, "green.jpg"),
+            DressName == "Yellow" ~paste0(pathToDressColours, "yellow.jpg"),
+            DressName == "Blue" ~paste0(pathToDressColours, "blue.jpg"),
+            DressName == "Flamingo pink" ~ paste0(pathToDressColours,"flamingo_pink.jpg"),
+            DressName == "Ocean blue" ~ paste0(pathToDressColours,"ocean_blue.jpg"),
+            DressName == "Sunset orange" ~ paste0(pathToDressColours,"sunset_orange.jpg"),
+            DressName == "Cotton candy" ~paste0(pathToDressColours, "cotton_candy.jpg"),
+            DressName == "Blurple" ~paste0(pathToDressColours, "blurple.jpg"),
+            DressName == "Grapefruit" ~ paste0(pathToDressColours,"grapefruit.jpg"),
+            DressName == "Popsicle" ~ paste0(pathToDressColours,"popsicle.jpg"),
+            TRUE ~ NA_character_
+        )) -> outfits
+outfits
+```
+
+
+```{r}
+#| eval: FALSE
+#| echo: FALSE
+save.image(file = "onload.RData")
+```

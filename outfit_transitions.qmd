@@ -1,97 +1,12 @@
-# Surprise Song Outfits
-
-## Data wrangling
-
-:::{.callout-note}
-All data paths are relative to the root of [the GitHub repository](https://github.com/cmjt/studyinswift)
-:::
-
-```{r, message=FALSE}
-## packages 
-require(tidyverse)
-require(readxl)
-require(ggimage)
-require(extrafont)
-```
-
-```{r, message = FALSE}
-## reading in data
-surpriseSongsDressColours <-  readxl::read_excel("raw_data/surprise_songs.xlsx", sheet = "List")
-surpriseSongsDressColours$Date <- as.Date(surpriseSongsDressColours$Date)
-## map hex colour to outfit
-dressColorMapping <- unique(surpriseSongsDressColours %>% select(DressName, ColourHex1))
-colorPaletteDresses <- setNames(dressColorMapping$ColourHex1, dressColorMapping$DressName)
-pathToDressColours <- "dress_images/images_high_res/cropped/"
-```
-
-```{r, message = FALSE}
-## Need only consider first element of each concerts as the
-## same outfit was worn for all surprise songs
-## for anyone concert
-oneRowPerConcert <- surpriseSongsDressColours %>%
-    group_by(Date) %>%
-    arrange(Date, Order) %>% 
-    slice(1) %>%
-    ungroup()
-oneRowPerConcert
-```
-
-```{r, message = FALSE}
-## map outfits to the corresponding images
-oneRowPerConcert %>%
-    count(DressName) %>%
-    mutate(
-        percentage = n / sum(n) * 100,
-        imagePath = case_when(
-            DressName == "Pink" ~paste0(pathToDressColours, "pink.jpg"),
-            DressName == "Green" ~paste0(pathToDressColours, "green.jpg"),
-            DressName == "Yellow" ~paste0(pathToDressColours, "yellow.jpg"),
-            DressName == "Blue" ~paste0(pathToDressColours, "blue.jpg"),
-            DressName == "Flamingo pink" ~ paste0(pathToDressColours,"flamingo_pink.jpg"),
-            DressName == "Ocean blue" ~ paste0(pathToDressColours,"ocean_blue.jpg"),
-            DressName == "Sunset orange" ~ paste0(pathToDressColours,"sunset_orange.jpg"),
-            DressName == "Cotton candy" ~paste0(pathToDressColours, "cotton_candy.jpg"),
-            DressName == "Blurple" ~paste0(pathToDressColours, "blurple.jpg"),
-            DressName == "Grapefruit" ~ paste0(pathToDressColours,"grapefruit.jpg"),
-            DressName == "Popsicle" ~ paste0(pathToDressColours,"popsicle.jpg"),
-            TRUE ~ NA_character_
-        )) -> outfits
-outfits
-```
-
-## Visualizing surprise song outfits
-
-### The most worn *looks* {.unnumbered}
+# Are the surprise song outfits random?
 
 ```{r}
-## barchart
-ggplot(outfits, aes(x = reorder(DressName, -n), y = n, fill = DressName)) +
-    geom_bar(stat = "identity", width = 0.8) +  
-    geom_image(
-        aes(image = imagePath, y = n),  
-        size = 0.15,                    
-        by = "height"                    
-    ) +
-    geom_text(
-        aes(y = n + 3.8, label = paste0(n, "\n(", round(percentage, 1), "%)")),  
-        vjust = 0,  
-        color = "black",
-        size = 4
-    ) +
-    scale_fill_manual(values = colorPaletteDresses) +
-    theme_minimal() +
-    labs(title = "", x = "", y = "") +
-    theme(
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 14),
-        axis.text.y = element_text(size = 14),
-        plot.title = element_text(hjust = 0.5, size = 16),
-        axis.title.x = element_blank(),
-        axis.title.y = element_blank(),
-        legend.position = "none"
-    ) + ylim(0, 35)
+#| echo: FALSE
+#| message: FALSE
+load("onload.RData")
+require(tidyverse)
 ```
 
-## Are the outfits random?
 
 In this section we're going to look at the order of surprise song outfits. First let's just select the data we need.
 
@@ -136,7 +51,7 @@ final_leg |> transitions() |> knitr::kable(caption = "Outfit transitions for the
 ```
 
 
-### A $\chi^2$-test for the transition counts
+## A $\chi^2$-test for the transition counts
 
 Likely, the first standard hypothesis test you think of for count/contingency data is the $\chi^2$-test (or the chi-squared test). Essentially, this works by *testing* for equal transition rates (if the outfit choices were completely random we'd expect equal numbers of transitions between the outfits); Slightly more formally,
 
@@ -187,7 +102,7 @@ chisq_data |>
 ```
 
 
-### A randomisation test 
+## A randomisation test 
 
 If we're not happy that our parametric assumptions are met then we can (*often*) fall back on simple resampling methods; basically simulating what would happen under chance alone and then comparing how our observed situation stack up!
 
@@ -306,7 +221,7 @@ rand_data |>
 ```
 In each case, no evidence to suggest we see the particular transitions more or less frequently than would be expected under the NULL hypothesis of chance alone. (*Note the transitions were chosen arbitrarily*)
 
-### A likelihood ratio test
+## A likelihood ratio test
 
 
 What about using a model based approach? If the outfits were *random* (given the choices) then we'd expect each to occur independently of one another (i.e., the chance of one outfit is independent of any other).
@@ -455,7 +370,7 @@ markovchainFit(data = mid_leg, method = "mle") ## as above but with ses :)
 ```
 
 
-What about 1st vs 2nd Markov Chain
+**What about 1st vs 2nd Markov Chain**
 
 ```{r}
 ## Let's trick markovchain into doing this for us
@@ -474,57 +389,49 @@ sec_order <- snap |>
 ll1 <- markovchainFit(data = mid_leg, method = "mle")$logLikelihood
 ll1
 ll2 <- markovchainFit(data = sec_order$y_current, method = "mle")$logLikelihood
-ll2
+ll2 ## eyeballing this, looks pretty similar to 1st order
+
 
 
 ```
 
 
+For fun let's also calculate the 2nd order Markov Chain likelihood manually.
 
-
-```{r, echo = FALSE, eval = FALSE}
-
-events <- mid_leg
-states <- unique(events)
-k <- length(states)
-n <- length(events)
-
-# Map to integers
-f <- factor(events, levels = states)
-i <- as.integer(f)
-
-# Initialize 3D transition count array
-counts <- array(0, dim = c(k, k, k))
-
-# Count (i, j) -> l transitions
-for (t in 3:n) {
-  a <- i[t - 2]
-  b <- i[t - 1]
-  c <- i[t]
-  counts[a, b, c] <- counts[a, b, c] + 1
-}
-
-# Normalize to get conditional probabilities
-probs <- counts
-for (a in 1:k) {
-  for (b in 1:k) {
-    total <- sum(counts[a, b, ])
-    if (total > 0) {
-      probs[a, b, ] <- counts[a, b, ] / total
+```{r}
+## function to calculate the log likelihood assuming a second-order Markov chain
+ll2 <- function(x){
+  n <- length(x)
+  k <- length(unique(x))
+  chain <- as.factor(x)
+  ## Initialize 3D transition count array
+  counts <- array(0, dim = c(k, k, k))
+  int <- as.integer(chain)
+  for (t in 3:n) {
+    a <- int[t - 2]
+    b <- int[t - 1]
+    c <- int[t]
+    counts[a, b, c] <- counts[a, b, c] + 1
     }
+  ## Calculate conditional probabilities
+  probs <- counts
+  for (a in 1:k) {
+    for (b in 1:k) {
+      total <- sum(counts[a, b, ])
+    if (total > 0) {probs[a, b, ] <- counts[a, b, ] / total}
+      }
+    }
+  ll <- 0
+  for (t in 3:n) {
+    a <- int[t - 2]
+    b <- int[t - 1]
+    c <- int[t]
+    p <- probs[a, b, c]
+    if (p > 0) {ll <- ll + log(p)}
   }
+  return(ll)
 }
-
-# Compute log-likelihood
-logL <- 0
-for (t in 3:n) {
-  a <- i[t - 2]
-  b <- i[t - 1]
-  c <- i[t]
-  p <- probs[a, b, c]
-  if (p > 0) {
-    logL <- logL + log(p)
-  }
-}
+## 2nd order Markov Chain log-likelihood
+ll2(mid_leg)
 
 ```

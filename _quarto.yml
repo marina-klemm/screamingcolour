@@ -8,6 +8,8 @@ book:
   date: ""
   chapters:
     - index.qmd
+    - data.qmd
+    - viz.qmd
     - outfit_transitions.qmd
     - colour_sentiments.qmd
     - references.qmd

@@ -1,0 +1,44 @@
+# Visualizing surprise song outfits
+
+```{r}
+#| echo: FALSE
+#| message: FALSE
+load("onload.RData")
+require(tidyverse)
+```
+
+```{r, message = FALSE}
+## extra packages
+require(ggimage)
+require(extrafont)
+```
+
+## The most worn *looks* {.unnumbered}
+
+```{r}
+## barchart
+ggplot(outfits, aes(x = reorder(DressName, -n), y = n, fill = DressName)) +
+    geom_bar(stat = "identity", width = 0.8) +  
+    geom_image(
+        aes(image = imagePath, y = n),  
+        size = 0.15,                    
+        by = "height"                    
+    ) +
+    geom_text(
+        aes(y = n + 3.8, label = paste0(n, "\n(", round(percentage, 1), "%)")),  
+        vjust = 0,  
+        color = "black",
+        size = 4
+    ) +
+    scale_fill_manual(values = colorPaletteDresses) +
+    theme_minimal() +
+    labs(title = "", x = "", y = "") +
+    theme(
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 14),
+        axis.text.y = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5, size = 16),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.position = "none"
+    ) + ylim(0, 35)
+```

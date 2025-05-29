@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Colours of the Taylor Swift Universe - 2&nbsp; Summary</title>
+<title>Colours of the Taylor Swift Universe - 4&nbsp; Colour Sentiments</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -133,7 +133,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Summary</span></h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Colour Sentiments</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -163,12 +163,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./outfit_transitions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Surprise Song Outfits</span></a>
+  <a href="./data.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Data wrangling</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./colour_sentiments.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Summary</span></a>
+  <a href="./viz.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Visualizing surprise song outfits</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./outfit_transitions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Are the surprise song outfits random?</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./colour_sentiments.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Colour Sentiments</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -188,7 +198,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Summary</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Colour Sentiments</span></h1>
 </div>
 
 
@@ -203,11 +213,232 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<p>In summary, this book has no content whatsoever.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: tidyverse</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.2     ✔ tibble    3.2.1
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.0.4     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> <span class="st">"raw_data/album_info_metadata_neutral.xlsx"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(allSongsMetadata, <span class="at">sheet =</span> <span class="st">"metadata"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"code/colour_palletts.r"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>rawColorData <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_MK, <span class="st">";"</span>))),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">meaning =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_meaningMK, <span class="st">";"</span>)))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(colour) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(meaning))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>colorSentimentScores <span class="ot">&lt;-</span> rawColorData <span class="sc">%&gt;%</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">meaning =</span> <span class="fu">trimws</span>(meaning),  </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">score =</span> <span class="fu">case_when</span>(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"positive"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"neutral"</span> <span class="sc">~</span> <span class="fl">0.5</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"negative"</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Calculate average sentiment for each individual color</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>individualColorSentiments <span class="ot">&lt;-</span> colorSentimentScores <span class="sc">%&gt;%</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(colour) <span class="sc">%&gt;%</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">avgSentiment =</span> <span class="fu">mean</span>(score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">mentionCount =</span> <span class="fu">n</span>()</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourGroup <span class="ot">&lt;-</span> colorGroups[individualColorSentiments<span class="sc">$</span>colour]</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="do">## Beta regression basic</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> betareg<span class="sc">::</span><span class="fu">betareg</span>(avgSentiment <span class="sc">~</span> colourGroup, <span class="at">data =</span> individualColorSentiments)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>mod <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<pre><code>
+Call:
+betareg::betareg(formula = avgSentiment ~ colourGroup, data = individualColorSentiments)
+
+Randomized quantile residuals:
+    Min      1Q  Median      3Q     Max 
+-2.2864 -0.7386  0.0000  1.0007  2.6461 
+
+Coefficients (mu model with logit link):
+                    Estimate Std. Error z value Pr(&gt;|z|)   
+(Intercept)         -0.06829    0.02886  -2.366  0.01796 * 
+colourGroupblacks    0.06829    0.03071   2.224  0.02614 * 
+colourGroupblues     0.06317    0.02954   2.138  0.03248 * 
+colourGroupcolorful  0.08829    0.03155   2.799  0.00513 **
+colourGroupgreens    0.08436    0.03218   2.622  0.00874 **
+colourGrouppurples   0.08239    0.03205   2.571  0.01015 * 
+colourGroupreds      0.06924    0.02947   2.350  0.01879 * 
+colourGroupwhites    0.06268    0.03029   2.069  0.03852 * 
+colourGroupyellows   0.07526    0.03042   2.474  0.01337 * 
+
+Phi coefficients (phi model with identity link):
+      Estimate Std. Error z value Pr(&gt;|z|)    
+(phi)     8450       2211   3.822 0.000132 ***
+
+Exceedence parameter (extended-support xbetax model):
+        Estimate Std. Error z value Pr(&gt;|z|)    
+Log(nu)   4.5563     0.2507   18.17   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+Exceedence parameter nu: 95.2263
+Type of estimator: ML (maximum likelihood)
+Log-likelihood: -56.72 on 11 Df
+Number of iterations in BFGS optimization: 679 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(mgcv)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(avgSentiment <span class="sc">~</span> colourGroup, <span class="at">family =</span> <span class="fu">betar</span>(<span class="at">link=</span><span class="st">"logit"</span>), <span class="at">data =</span> individualColorSentiments)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(gam)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Family: Beta regression(0.114) 
+Link function: logit 
+
+Formula:
+avgSentiment ~ colourGroup
+
+Parametric coefficients:
+                    Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept)         -0.06247    1.41004  -0.044    0.965
+colourGroupblacks    0.06247    1.54475   0.040    0.968
+colourGroupblues    -0.10132    1.47240  -0.069    0.945
+colourGroupcolorful  0.94004    1.47565   0.637    0.524
+colourGroupgreens    0.75018    1.53214   0.490    0.624
+colourGrouppurples   0.72811    1.53282   0.475    0.635
+colourGroupreds      0.15321    1.44663   0.106    0.916
+colourGroupwhites   -0.30113    1.54076  -0.195    0.845
+colourGroupyellows   0.28614    1.48549   0.193    0.847
+
+
+R-sq.(adj) =  -0.0154   Deviance explained = -0.308%
+-REML = -1017.9  Scale est. = 1         n = 69</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>new.y <span class="ot">&lt;-</span> <span class="fu">predict</span>(gam, <span class="at">se.fit =</span> <span class="cn">TRUE</span>, <span class="at">type=</span><span class="st">"response"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="do">## correspondance analysis</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(colorSentimentScores<span class="sc">$</span>colour, colorSentimentScores<span class="sc">$</span>meaning)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                       
+                        negative neutral positive
+  amber                        0       1        0
+  aquamarine                   0       0        1
+  aurora borealis green        0       0        2
+  black                        2       5        2
+  black and white              2       2        0
+  blackout                     0       0        1
+  bleached                     0       1        0
+  blood monlit                 0       0        1
+  blood-soaked                 2       0        0
+  blue                        10       6        6
+  blues                        3       0        0
+  bluest                       2       0        0
+  bronze                       0       1        0
+  burgundy                     0       1        0
+  burning red                  1       0        0
+  cherry                       0       0        1
+  colour                       0       0        2
+  colours                      0       0        4
+  crimson                      0       0        1
+  crimson clover               1       0        0
+  dark gray                    0       1        0
+  darkest gray                 1       0        0
+  deep blue                    1       0        0
+  deep brown                   0       0        1
+  evergreen                    0       0        1
+  flamingo pink                0       0        1
+  gold                         0       4        4
+  golden                       0       1       11
+  gray                        11       1        2
+  green                        0       1        5
+  greige                       1       0        0
+  hospital gray                1       0        0
+  indigo                       0       0        1
+  key lime green               0       1        0
+  lavender                     0       0        2
+  light pink                   0       0        1
+  lilac                        0       1        0
+  maroon                       0       2        0
+  moonstone                    0       0        1
+  neon                         0       0        2
+  ocean blue                   0       0        1
+  ocean wave blues             1       0        0
+  opal                         0       1        0
+  orange                       0       1        0
+  pale blue                    0       0        1
+  pastel                       0       1        0
+  pink                         0       0        1
+  plaid                        0       2        0
+  purple-pink                  0       0        1
+  rainbow                      0       0        1
+  red                          6       4        6
+  redhaired                    0       1        0
+  redneck                      1       0        0
+  rose                         0       1        0
+  rose golden                  0       1        0
+  rosy                         0       0        1
+  sapphire                     1       0        0
+  scarlet                      2       2        0
+  scarlet maroon               1       0        0
+  screaming colour             0       0        1
+  silver                       0       1        0
+  snow white                   0       1        0
+  stained glass                1       0        0
+  tangerine                    0       0        1
+  teal                         0       1        0
+  ultraviolet                  0       0        1
+  violets                      1       0        0
+  white                        1       9        3
+  wine-stained                 1       0        0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>colorSentimentScores<span class="sc">$</span>colourGroup <span class="ot">&lt;-</span> colorGroups[colorSentimentScores<span class="sc">$</span>colour]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>cols.df <span class="ot">&lt;-</span> <span class="fu">as.data.frame.matrix</span>(<span class="fu">table</span>(colorSentimentScores<span class="sc">$</span>colourGroup, colorSentimentScores<span class="sc">$</span>meaning))</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>cols.df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                negative neutral positive
+black and white        2       2        0
+blacks                 3       7        3
+blues                 18       7       10
+colorful               1       3       11
+greens                 0       3        8
+purples                1       1        4
+reds                  15      11       13
+whites                13      12        5
+yellows                1       9       17</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(cols.df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's Chi-squared test
+
+data:  cols.df
+X-squared = 47.661, df = 16, p-value = 5.369e-05</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>coa <span class="ot">&lt;-</span> ade4<span class="sc">::</span><span class="fu">dudi.coa</span>(cols.df, <span class="at">scannf =</span> <span class="cn">FALSE</span>, <span class="at">nf =</span> <span class="dv">2</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra) </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_ca_biplot</span>(coa, <span class="at">repel =</span> <span class="cn">TRUE</span>, <span class="at">col.col =</span> <span class="st">"brown"</span>, <span class="at">col.row =</span> <span class="st">"purple"</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">labelsize =</span> <span class="dv">5</span>, <span class="at">pointsize =</span> <span class="dv">5</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">25</span>),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.x.bottom =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>),</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.y.left =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>),</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>)) <span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>,<span class="fl">0.5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="colour_sentiments_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
@@ -350,7 +581,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./outfit_transitions.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Surprise Song Outfits</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Are the surprise song outfits random?</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
