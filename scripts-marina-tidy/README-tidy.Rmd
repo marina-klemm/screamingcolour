@@ -1,0 +1,945 @@
+---
+title: "README-tidy"
+author: "Marina Klemm"
+date: "2025-05-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Screaming Colors: A Swiftie Guide to Eras Tour Stats
+
+This whole analysis started with a Swiftie curiosity over the selection of surprise songs' dresses colors and if they reflected the mood being sang in said songs. This then raised the question of which possible meaning that colors might have in the Swiftverse. Where do we even start analyzing that?
+
+What followed was months of metadata being added to songs; identifying every single time Swift mentions color and what they mean (it turns out, 45% of her songs mention color!);  decision over which package to use to tokenize song's moods and rate them on a scale of most negative to most positive; which led to another question: would lore collected by a long-time fan be more meaningful to identify the song's meaning over an automated dictionary-based approach? 
+
+One might say this Swiftie fell in a rabbit hole, or is walking down Clown-elia Street again, but with Eras Tour ending and no signal of Debut (TV) or Reputation (TV) being released, there was some considerable amount of time that could be dedicated to this silly and fun passion project. 🤓
+
+
+## Lore Data Set
+
+The allSongsMetadata data set includes the fan lore: sentiment, message, keywords, muse, color meaning, notes, secret messages, color mentions and their meanings (between positive, neutral or negative). The sentiments were chosen from a list of feelings compiled by the Hoffman Institute Foundation (May/2015 review). Soon it was realized that a single sentiment was not enough to completely differentiate between songs and the message and keywords were also created to add more information to single out a song. For example, while "Tim McGraw" and "Back to December" both have the overall "nostalgic" feeling, the first carries a "falling in love" message, while the latter is about "longing". Likewise, "Tim McGraw" keywords are "romantic, first love, country music", while "Back to December" keywords are "breakup, regretful, heartbreak". 
+
+This is what the data set looks like:
+
+*Note: the column "lyrics" was ommited as it contains the whole lyrics of each song, making its visualization messy in this Read me file.*
+
+
+```{r load-libraries, include=FALSE}
+library(readxl)
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+```
+
+```{r load-metadata, echo = FALSE}
+# Load the metadata data set
+allSongsMetadata <- read_excel("albumInfoMetadataNeutralMK.xlsx")
+
+# Display basic information about the data set
+cat("Data Set Overview:\n")
+cat("- Total number of songs:", nrow(allSongsMetadata), "\n")
+cat("- Number of variables:", ncol(allSongsMetadata), "\n")
+cat("- Column names:", paste(names(allSongsMetadata), collapse = ", "), "\n\n")
+```
+
+```{r data set-summary, echo = FALSE}
+# Display the first few rows to show structure
+kable(head(allSongsMetadata %>% select(-lyrics)), caption = "Sample of Taylor Swift Songs Metadata")
+```
+
+## Surprise Songs Data Set
+
+Parallel to the development of the metadata (aka lore) database, a few details about each surprise song performance were noted down in the surpriseSongsDressColours data set. Each concert had a few rows, one per surprise song (Taylor performed two surprise songs in each of the concerts, the first one on the guitar and the second one on the piano). Besides the two regular surprise songs, she occasionally started mashing up songs in this acoustic set; although the first mashup happened in her second night in Ohio (July 1st, 2023), they became more common from the second night of her Melbourne concert (February 17th, 2024). Thus, three columns account for it: Mashups, with the options none, one or two; Mashup, with the name of the first song mashed up with Song title; and, Mashup2, with yet a third song that was mashed up with Song title and Mashup (in the case of Mashups = Two). 
+
+Besides the song titles and mashups, the surprise songs data set includes the names of the city, state, country, stadium and dates in which she performed. Moreover, the name of the dress she was wearing is included in the column DressName, and its color in descriptive terms is found on Colour1, its HEX formatting on ColourHex1, and its RGB formatting on ColourRGB1. As some dresses like "Flamingo pink" and "Sunset orange" are made up of an ombre of two colors, their name and codes are also found on Colour2, ColourHex2 and ColourRGB2. Lastly, other details are also included: who she was dating at the time in the Relationship column; which leg of the tour (First legs, European, Final leg), which night on that city, which instrument she played while singing said song, special guests in the audience, and notes for overall remarks such as: "on July 9th, she sang Last Kiss as one the surprise songs, and that date is mentioned on the song".   
+
+This is what the data looks like:
+
+```{r load-surprisesongsdata, echo = FALSE, message=FALSE}
+# Load the surprise songs data set
+surpriseSongsDressColours <- read_excel("surpriseSongsDressColoursMashupsLong.xlsx")
+
+# Display basic information about the data set
+cat("Data Set Overview:\n")
+cat("- Total number of surprise songs:", nrow(surpriseSongsDressColours), "\n")
+cat("- Number of variables:", ncol(surpriseSongsDressColours), "\n")
+cat("- Column names:", paste(names(surpriseSongsDressColours), collapse = ", "), "\n\n")
+```
+
+```{r surprise songs-summary, echo = FALSE}
+# Display the first few rows to show structure
+kable(tail(surpriseSongsDressColours), caption = "Sample of all Eras Tour Surprise Songs")
+```
+
+
+## We Never Get Out of Style: An overview of surprise song dresses across the whole tour
+
+```{r oneworpercontert, echo = FALSE, message=FALSE}
+#Now, I need to select only one row per concert, which I can do by choosing only
+# the first song played in each concert
+oneRowPerConcert <- surpriseSongsDressColours %>%
+  group_by(Date) %>%
+  arrange(Date, Order) %>%  # Assuming 'Order' indicates song order in the concert
+  slice(1) %>%
+  ungroup()
+
+oneRowPerConcert$Date <- as.Date(oneRowPerConcert$Date)
+```
+
+
+```{r dresses, echo = FALSE, fig.width=12, fig.height=10, fig.align='center', message=FALSE, warning=FALSE}
+require(cowplot)
+require(ggplot2)
+require(ggimage)
+require(gridExtra)
+require(here)
+require(extrafont)
+
+pathToDressColors <- here("Dresses")
+
+oneRowPerConcertWithImages <- oneRowPerConcert %>%
+  count(DressName) %>%
+  mutate(
+    percentage = n / sum(n) * 100,
+    # Automatically build the path based on the dress name
+    imagePath = file.path(pathToDressColors, paste0(DressName, ".jpg"))
+  )
+
+## Organize the colour syntax
+dressColorMapping <- unique(oneRowPerConcert %>% select(DressName, ColourHex1))
+colorPaletteDresses <- setNames(dressColorMapping$ColourHex1, dressColorMapping$DressName)
+
+# First, find the first date for each dress
+dress_first_appearance <- oneRowPerConcert %>%
+  group_by(DressName) %>%
+  summarize(FirstAppearance = min(Date)) %>%
+  arrange((FirstAppearance))
+
+# Convert DressName to a factor with ordered levels
+oneRowPerConcert$DressName <- factor(oneRowPerConcert$DressName, 
+                                     levels = dress_first_appearance$DressName)
+
+max_dress_level <- length(unique(oneRowPerConcert$DressName))
+
+
+# Create the main timeline plot
+main_plot <- ggplot(oneRowPerConcert, aes(x = Date, y = DressName, color = ColourHex1)) +
+  geom_point(size = 4, alpha = 1) +
+  scale_color_identity() +
+  theme_minimal() +
+  labs(
+    title = "",
+    x = "",
+    y = ""
+  ) +
+  geom_rect(aes(xmin = as.Date("2023-08-28"), xmax = as.Date("2023-11-08"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +
+  geom_rect(aes(xmin = as.Date("2023-11-27"), xmax = as.Date("2024-02-06"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +  
+  geom_rect(aes(xmin = as.Date("2024-03-10"), xmax = as.Date("2024-05-08"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +
+  geom_rect(aes(xmin = as.Date("2024-08-21"), xmax = as.Date("2024-10-17"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, color = NA) +
+  # Vertical lines for the key events
+  geom_vline(xintercept = as.Date("2024-05-09"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2023-03-17"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2024-10-18"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2023-08-24"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2024-02-07"), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = as.Date("2024-04-16"), linetype = "solid", color = "darkgray", size=2) + ## Changed to 16 (the right day is 19th) for vis requirements
+  geom_vline(xintercept = as.Date("2023-07-07"), linetype = "solid", color = "purple", size=2) +
+  geom_vline(xintercept = as.Date("2023-10-27"), linetype = "solid", color = "blue", size=2) +
+  
+  # Text annotations for the events above
+  annotate("text", x = as.Date("2024-05-09"), y = max_dress_level, 
+           label = "Europe¹", color = "black", angle = -90, vjust = -0.5, family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2023-03-17"), y = max_dress_level, 
+           label = "United\nStates¹", color = "black", angle = -90, vjust = -0.2, family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2024-10-18"), y = max_dress_level, 
+           label = "North \nAmerica¹", color = "black", angle = -90, vjust = -0.2,  family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2023-08-24"), y = max_dress_level, 
+           label = "Latin \nAmerica¹", color = "black", angle = -90, vjust = -0.2,  family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2024-02-07"), y = max_dress_level, 
+           label = "Asia/\nOceania¹", color = "black", angle = -90, vjust = -0.2,  family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2024-04-16"), y = max_dress_level, 
+           label = "TTPD²", color = "darkgray", angle = -90, vjust = -0.5,  family ="Gill Sans MT", size = 5, 
+           fontface = "bold") +
+  annotate("text", x = as.Date("2023-07-07"), y = max_dress_level, 
+           label = "Speak\nNow TV²", color = "purple", angle = -90, vjust = -0.2,  family ="Gill Sans MT", size = 5) +
+  annotate("text", x = as.Date("2023-10-27"), y = max_dress_level, 
+           label = "1989\nTV²", color = "blue", angle = -90, vjust = -0.2,  family ="Gill Sans MT", size = 5) +
+  
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months") +
+  theme(axis.text.x = element_text(angle = 0, hjust = 1, size = 14),
+        axis.text.y = element_text(size = 14, hjust = 0),  # Set hjust=0 for left alignment
+        plot.title = element_text(hjust=0.5, size = 14, margin = margin(b = 20), face = "bold"),
+        plot.margin = margin(t = -7, r = 0, b = 10, l = 0),
+        text = element_text(color = "black", family = "Gill Sans MT", size = 14)) 
+
+
+# Create dress count plot (to go on the right side)
+# Ensure the dress order matches exactly with the main plot
+dress_levels <- levels(factor(oneRowPerConcert$DressName))
+oneRowPerConcertWithImages$DressName <- factor(oneRowPerConcertWithImages$DressName, levels = dress_levels)
+
+count_plot <- ggplot(oneRowPerConcertWithImages, aes(x = n, y = DressName, fill = DressName)) +
+  geom_bar(stat = "identity", width = 0.8) +
+  geom_image(
+    aes(image = imagePath, x = n),  
+    size = 0.09,                    
+    nudge_x = 2,
+    by = "height"                    
+  ) +
+  geom_text(
+    aes(x = n + 3, label = paste0(n, " (", round(percentage, 1), "%)")),  
+    hjust = 0,
+    nudge_x = 3,
+    color = "black",
+    size = 5,
+    family = "Gill Sans MT"
+  ) +
+  scale_fill_manual(values = colorPaletteDresses) +
+  theme_minimal() +
+  labs(
+    title = "",
+    x = "",
+    y = ""
+  ) +
+  theme(
+    axis.text.y = element_blank(),
+    axis.text.x = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = 12),
+    legend.position = "none",
+    plot.margin = margin(t = -7, r = 0, b = 10, l = 0),
+    text = element_text(color = "black", family = "Gill Sans MT", size = 14)
+  ) +
+  xlim(0, 50)   # Adjust limit to accommodate text and images
+
+
+# Merge the plots using cowplot
+merged_plot <- plot_grid(
+  count_plot, main_plot,
+  ncol = 2,
+  align = "h",
+  axis = "tb",
+  rel_widths = c(1.5, 3)  # Adjust relative widths as needed
+)
+
+# Create title and subtitle with ggdraw
+title_with_subtitle <- ggdraw() + 
+  draw_label(
+    "Screaming Color",
+    fontface = "bold",
+    size = 20,
+    #x = 0.5,
+    y = 0.55,
+    hjust = 0.5,
+    fontfamily = "Gill Sans MT" 
+  ) +
+  draw_label(
+    "Frequency and Timeline of Taylor Swift's Dress Colors Across Tour Legs¹ and Album Releases²",
+    fontface = "plain",
+    size = 16,
+    #  x = 0.5,
+    y = 0.1,
+    hjust = 0.5,
+    fontfamily = "Gill Sans MT" 
+  )
+
+# Then in the final plot assembly, replace the title component:
+final_plot <- plot_grid(
+  title_with_subtitle, merged_plot,
+  ncol = 1,
+  rel_heights = c(0.2, 2)  # Slightly increased height for title+subtitle
+)
+
+final_plot
+
+```
+
+Looking at it now, it all seems so simple: the addition of new dresses throughout different tour legs expanded the color spectrum of the surprise songs setlist, although the original colors remained most prevalent overall.  Tallying the surprise song outfits revealed a dominance of Pink, worn for around 20% of performances (i.e., 29 out of the 147 concerts). Coming in second was Yellow (~16%) followed by  Green and Sunset Orange (~14% each). Finally the rare, yet memorable, Popsicle, Cotton Candy, and Grapefruit outfits were each worn for ~ 2-3% of surprise song performances.
+
+This wasn’t just a random mix of colors. While the first three legs of the tour had only four original colors to pick from, European fans got their own special colors that weren’t seen anywhere else. Then, the final North American shows had their own unique colors, too. Taylor seemed to have favorite colors for each part of the world she visited. 
+But, here’s the interesting part: did she pick dress colors completely randomly every night, or was there some kind of pattern? You looked at the data, and during the first part of the tour, it really was random. The color she wore one night had absolutely nothing to do with what she’d wear the next night. To describe it in her own terms, devils roll the dice, angels roll their eyes – it was pure chance, with no way to predict what would come next.  
+
+But people are people and sometimes we change our minds, and that’s what happened when she got to Europe! Suddenly, the previous night’s dress color actually gave fans hints about what she’d wear next. The pattern wasn’t super strong, but it was definitely there: if she wore Flamingo Pink one night, she would likely wear Sunset Orange on the following night and Ocean Blue on the third night, then rinse and repeat. 
+Then, when Taylor came back to North America for the final shows, we watched it begin again. There was no pattern to guess from anymore, as if by the end of the tour, they just went with whatever felt right for each night instead of following a particular system.
+
+ 
+```{r, Markov-Chain stats}
+# Include Markov-Chain stats
+```
+ 
+ 
+## I told you I was a mastermind: does the dress colour predict the mood of the surprise song?
+
+
+The dress colors might seem random, but as a dedicated Swiftie who’s spotted countless easter eggs over the years, you can’t help but wonder if there’s a connection between the dress colors and the mood of the songs she performed while wearing them. To figure this out, you create a “Swift Dictionary of Colors”. 
+Across all 242 songs Taylor has released, nearly half (110, 45%) mention colors in their lyrics, adding up to 180 individual references in total. To you, this clearly means colors have a special importance in her linguistic abilities. While examining these lyrics, you notice that colors can have very different meanings in her songs.  Take "blue" for example - it can be negative ("we're so sad, we paint the town blue"), neutral ("drowning in the Blue Nile, he sent me 'Downtown Lights'"), or positive ("clear blue water, high tide came and brought you in").
+
+To measure the emotional feel of every color, you give each mention a simple score: +1 for positive feelings (love, happiness, hope), 0 for neutral emotions (descriptive, but no feeling linked), and -1 for negative emotions (sadness, anger, heartbreak). Then you group similar shades together - “Greens” includes everything from “aurora borealis green”, to “teal”.
+
+What you discover is fascinating! Green was the color of the grass where she used to read at Centennial Park, and it also turned out to be her most positive color family (scoring 0.57), followed closely by general colorful terms (0.56) and purples (0.40). On the flip side, whites were surprisingly negative (-0.41), even more so than blues (-0.11), which were predictably sad. This creates an emotional color gradient in her songwriting where greens and yellows consistently represent hope and renewal, while whites carried the most negative connotations. 
+Perhaps most interesting was how Taylor uses red - it scored almost neutral (-0.05), showing she uses this color to express both passion and pain equally. In her lyrics, "loving him was red" represents a positive emotional intensity, while maroon shades take on a more negative tone with lyrics like "will that make your memory fade from this scarlet maroon like it never happened?" She truly showed us colors she knows we can't see with anyone else.
+
+
+
+```{r, Charlottes bubble plot}
+
+# Charlotte's pretty bubble plot goes here
+```
+
+
+## Hits different: but how does one define the sentiment of a song?
+
+This analysis explores the emotional spectrum of Taylor Swift's discography by analyzing the sentiment of individual words in her lyrics using the Bing sentiment dictionary.
+
+```{r sentiment-setup, include=FALSE, message=FALSE, warning=FALSE}
+library(tidytext)
+library(dplyr)
+library(stringr)
+library(plotly)
+```
+
+### Text Processing and Tokenization
+
+The first step involves breaking down song lyrics into individual words (tokens) and cleaning the data for meaningful analysis.
+
+```{r tokenize-lyrics, echo=FALSE, message=FALSE, warning=FALSE}
+# Function to tokenize lyrics into individual words
+createTokenizedLyricsF <- function(songData) {
+  songsWithIdF <- songData %>%
+    mutate(songId = row_number()) %>%
+    select(songId, everything())
+  
+  tokenizedLyricsF <- songsWithIdF %>%
+    unnest_tokens(
+      output = word,
+      input = lyrics,
+      token = "words",
+      drop = FALSE
+    ) %>%
+    filter(!is.na(word), word != "") %>%
+    filter(!str_detect(word, "^[0-9]+$"))
+  
+  return(tokenizedLyricsF)
+}
+
+# Apply tokenization
+tokenizedSongs <- createTokenizedLyricsF(allSongsMetadata)
+
+# Remove stop words (common words like "the", "and", "is")
+tokenizedSongs <- tokenizedSongs %>%
+  anti_join(get_stopwords())
+
+# Remove song structure words and other non-lyrical content
+wordsToRemove <- c(
+  "taylor", "swift", "chorus", "verse", "bridge", "pre", "outro", "intro", 
+  "instrumental", "break", "post", "repeat", "interlude", "hook", "refrain",
+  "spoken", "voice", "vocals", "feat", "featuring", "produced", "written",
+  "background", "harmonies", "recorded", "mixed", "engineered", "oh"
+)
+
+cleanTokens <- tokenizedSongs %>%
+  filter(!word %in% wordsToRemove) %>%
+  filter(!str_detect(word, "\\d+")) %>%
+  filter(str_length(word) > 1)
+
+cat("Total words after cleaning:", nrow(cleanTokens), "\n")
+cat("Unique words:", n_distinct(cleanTokens$word), "\n")
+```
+
+### Sentiment Scoring
+
+Using the Bing sentiment dictionary, each word is classified as either positive or negative, then aggregated by song to create net sentiment scores.
+
+```{r sentiment-analysis, echo=FALSE, message=FALSE, warning=FALSE}
+# Apply sentiment analysis using Bing dictionary
+calculateSentimentsF <- function(tokenizedData) {
+  sentimentResults <- tokenizedData %>%
+    inner_join(get_sentiments("bing"), by = c("word" = "word"), 
+               relationship = "many-to-many")
+  return(sentimentResults)
+}
+
+taylorLyrics <- calculateSentimentsF(cleanTokens)
+
+# Convert sentiment to numeric scores (+1 for positive, -1 for negative)
+taylorLyrics <- taylorLyrics %>%
+  mutate(sentiment_score = case_when(
+    sentiment == "positive" ~ 1,
+    sentiment == "negative" ~ -1,
+    TRUE ~ 0
+  ))
+
+# Set album order for consistent visualization
+albumOrder <- c("Taylor Swift", "Fearless (Taylor's Version)", 
+                "Speak Now (Taylor's Version)", "Red (Taylor's Version)",
+                "1989 (Taylor's Version)", "Reputation", "Lover",
+                "folklore", "evermore", "Midnights",
+                "THE TORTURED POETS DEPARTMENT")
+
+taylorLyrics <- taylorLyrics %>%
+  mutate(album_name = factor(album_name, levels = albumOrder)) %>%
+  filter(!is.na(album_name))
+
+# Aggregate sentiment scores by song
+song_sentiment_scores_lyrics <- taylorLyrics %>%
+  group_by(album_name, track_number, track_name) %>%
+  summarize(
+    net_sentiment = sum(sentiment_score),
+    total_sentiment_words = n(),
+    normalized_sentiment = sum(sentiment_score) / n(),
+    .groups = "drop"
+  ) %>%
+  mutate(album_name = factor(album_name, levels = albumOrder))
+
+# Display sentiment distribution
+sentimentSummary <- taylorLyrics %>%
+  count(sentiment) %>%
+  mutate(percentage = round(n / sum(n) * 100, 1))
+
+cat("Sentiment word distribution:\n")
+print(sentimentSummary)
+```
+
+### Visualization: Emotional Spectrum Across Albums
+
+The following interactive chart shows the net sentiment score for each track based on their lyrics:
+
+```{r sentiment-plot, echo=FALSE, fig.width=10, fig.align='center'}
+
+colorPaletteAlbums <- c(
+  "Taylor Swift" = "#b8cfb3",    
+  "Fearless (Taylor's Version)" = "#ffea9f",        
+  "Speak Now (Taylor's Version)" = "#8000ff",       
+  "Red (Taylor's Version)" = "#D34C58",             
+  "1989 (Taylor's Version)" = "#88C4D7",           
+  "Reputation" = "#1A1A1A",      
+  "Lover" = "#F1B3D1",           
+  "folklore" = "#9E9E9E",        
+  "evermore" = "#cc621b",        
+  "Midnights" = "#2C2E52",
+  "THE TORTURED POETS DEPARTMENT" = "gray"
+)
+
+# Create the main sentiment visualization
+p <- ggplot(song_sentiment_scores_lyrics, aes(x = track_number, y = net_sentiment, 
+                                             fill = album_name,
+                                             text = paste("Song:", track_name,
+                                                         "<br>Net sentiment:", net_sentiment))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~album_name, ncol = 2, scales = "free") +
+  scale_fill_manual(values = colorPaletteAlbums) +
+  theme_minimal() +
+  labs(
+    title = "Lyrics-Based Emotional Spectrum Across Taylor Swift's Discography",
+    subtitle = "Net sentiment scores based on lyrics analysis using the Bing dictionary",
+    x = "",
+    y = "Net Sentiment (Positive - Negative Words)"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    strip.text = element_text(size = 10, face = "bold"),
+    axis.text = element_text(size = 9),
+    axis.text.x = element_blank(),
+    legend.position = "none"
+  )
+
+# Convert to interactive plot
+interactive_plot_lyrics <- ggplotly(p, tooltip = "text")
+interactive_plot_lyrics
+```
+
+### Key Insights
+
+```{r sentiment-insights, echo=FALSE, warning = FALSE, message =FALSE}
+# Calculate some interesting statistics
+most_positive <- song_sentiment_scores_lyrics %>%
+  slice_max(net_sentiment, n = 1)
+
+most_negative <- song_sentiment_scores_lyrics %>%
+  slice_min(net_sentiment, n = 1)
+
+album_averages <- song_sentiment_scores_lyrics %>%
+  group_by(album_name) %>%
+  summarize(avg_sentiment = mean(net_sentiment), .groups = "drop") %>%
+  arrange(desc(avg_sentiment))
+
+cat("Most positive song:", most_positive$track_name, 
+    "from", most_positive$album_name, 
+    "(Score:", most_positive$net_sentiment, ")\n\n")
+
+cat("Most negative song:", most_negative$track_name, 
+    "from", most_negative$album_name, 
+    "(Score:", most_negative$net_sentiment, ")\n\n")
+
+```
+
+*Note: This analysis uses automated sentiment scoring (with the aid of the tidytext package) based on individual word classifications and the bing dictionary. The complexity of songs may not be fully captured by this dictionary-based approach, as context and metaphors can influence the true sentiment beyond individual word meanings.*
+
+### Word Contribution in the Lyrics Analysis
+
+Understanding which specific lyrics drive the sentiment scores helps reveal the emotional vocabulary in Taylor's music.
+
+```{r word-contributions-lyrics, echo=FALSE, fig.width=12, fig.align='center'}
+# Analyze word contributions to sentiment
+wordContributionsLyrics <- taylorLyrics %>%
+  count(word, sentiment) %>%
+  group_by(sentiment) %>%
+  slice_max(n, n = 20) %>%
+  mutate(word = reorder_within(word, n, sentiment)) %>%
+  ungroup()
+
+wordContributionsLyrics %>%
+  ggplot(aes(n, word, fill = sentiment)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = n), hjust = -0.2, size = 4) +
+  facet_wrap(~sentiment, scales = "free_y") +
+  scale_y_reordered() +
+  labs(
+    title = "Swift's Emotional Lexicon: The Most Sentimental Lyrics",
+    subtitle = "The 40 most frequent sentiment-charged terms in Taylor Swift's Music",
+    x = "Frequency",
+    y = NULL
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = c("negative" = "#D65D5D", "positive" = "#7CAE7A")) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 11),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    strip.text = element_text(size = 12, face = "bold")
+  )
+```
+
+
+
+## A Fan Perspective: Sentiment Analysis Using Curated Lore
+
+While automated lyrical analysis provides one lens, the Swiftie community has developed rich interpretations of song meanings over the years. This section analyzes sentiment using manually curated metadata including fan-identified keywords, themes, and emotional interpretations.
+
+*Note: only one fan added information to build the metadata.*
+
+### Methodology: Balancing Fan Insights
+
+To ensure fair comparison across songs, the analysis uses a sampling approach to balance the varying amounts of metadata available for different tracks.
+
+```{r metadata-setup, echo=FALSE, message=FALSE, warning=FALSE}
+# Count keywords to find minimum for balanced sampling
+keyword_counts <- allSongsMetadata %>%
+  mutate(keyword_count = str_count(keywords_MK, ",") + 1) %>%
+  pull(keyword_count)
+
+min_keywords <- min(keyword_counts)
+
+set.seed(123)  # For reproducible results
+
+cat("Minimum keywords per song:", min_keywords, "\n")
+cat("This ensures balanced representation across all tracks.\n\n")
+```
+
+```{r process-metadata, echo=FALSE, message=FALSE, warning=FALSE}
+# Function to process and tokenize metadata
+processMetadataColumnsF <- function(data) {
+  # Sample equal number of keywords for each song
+  data_with_sampled_keywords <- data %>%
+    rowwise() %>%
+    mutate(
+      sampled_keywords = list(
+        sample(
+          str_split(keywords_MK, ",")[[1]], 
+          min(length(str_split(keywords_MK, ",")[[1]]), min_keywords)
+        )
+      ),
+      keywords_MK = paste(sampled_keywords, collapse = ", ")
+    ) %>%
+    ungroup()
+  
+  # Combine sentiment, message, and keyword metadata
+  combinedMetadata <- data_with_sampled_keywords %>%
+    mutate(
+      combined_metadata = paste(
+        coalesce(sentiment_MK, ""),
+        coalesce(message_MK, ""),
+        coalesce(keywords_MK, ""),
+        sep = ", "
+      )
+    ) %>%
+    mutate(
+      combined_metadata = str_replace_all(combined_metadata, ",\\s*,", ","),
+      combined_metadata = str_trim(combined_metadata),
+      combined_metadata = str_remove_all(combined_metadata, "^,\\s*|\\s*,$")
+    )
+  
+  # Tokenize metadata into individual terms
+  tokenizedMetadata <- combinedMetadata %>%
+    unnest_tokens(
+      output = metadata_word,
+      input = combined_metadata,
+      token = "regex",
+      pattern = ",\\s*"  
+    ) %>%
+    mutate(
+      metadata_word = str_trim(metadata_word),
+      metadata_word = str_to_lower(metadata_word)
+    ) %>%
+    filter(metadata_word != "")
+  
+  return(tokenizedMetadata)
+}
+
+# Process the metadata
+processedMetadata <- processMetadataColumnsF(allSongsMetadata)
+
+# Get summary statistics
+metadata_stats <- processedMetadata %>%
+  summarise(
+    total_metadata_terms = n(),
+    unique_metadata_terms = n_distinct(metadata_word)
+  )
+
+cat("Total metadata terms processed:", metadata_stats$total_metadata_terms, "\n")
+cat("Unique metadata terms:", metadata_stats$unique_metadata_terms, "\n")
+```
+
+### Sentiment Scoring of Fan Metadata
+
+```{r metadata-sentiment, echo=FALSE, message=FALSE, warning=FALSE}
+# Apply sentiment analysis to metadata terms
+calculateSentimentsMetadataF <- function(processedMetadata) {
+  sentimentResults <- processedMetadata %>%
+    inner_join(get_sentiments("bing"), by = c("metadata_word" = "word"), 
+               relationship = "many-to-many")
+  return(sentimentResults)
+}
+
+taylorMetadata <- calculateSentimentsMetadataF(processedMetadata)
+
+# Convert to numeric scores
+taylorMetadata <- taylorMetadata %>%
+  mutate(sentiment_score = case_when(
+    sentiment == "positive" ~ 1,
+    sentiment == "negative" ~ -1,
+    TRUE ~ 0
+  ))
+
+# Order albums chronologically
+albumOrder <- c("Taylor Swift", "Fearless (Taylor's Version)", 
+                "Speak Now (Taylor's Version)", "Red (Taylor's Version)",
+                "1989 (Taylor's Version)", "Reputation", "Lover",
+                "folklore", "evermore", "Midnights",
+                "THE TORTURED POETS DEPARTMENT")
+
+taylorMetadata <- taylorMetadata %>%
+  mutate(album_name = factor(album_name, levels = albumOrder)) %>%
+  filter(!is.na(album_name))
+
+# Aggregate by song
+song_sentiment_scores_metadata <- taylorMetadata %>%
+  group_by(album_name, track_number, track_name) %>%
+  summarize(
+    net_sentiment = sum(sentiment_score),
+    total_sentiment_words = n(),
+    normalized_sentiment = sum(sentiment_score) / n(),
+    .groups = "drop"
+  )
+
+# Show sentiment distribution
+sentimentSummary <- taylorMetadata %>%
+  count(sentiment) %>%
+  mutate(percentage = round(n / sum(n) * 100, 1))
+
+cat("Fan metadata sentiment distribution:\n")
+print(sentimentSummary)
+```
+
+### Visualization: Emotional Spectrum Through Fan Lens
+
+The following interactive chart shows the net sentiment score for each track based on fan lore:
+
+```{r metadata-plot, echo=FALSE, fig.width=10, fig.align='center'}
+# Create interactive visualization
+p_metadata <- ggplot(song_sentiment_scores_metadata, aes(x = track_number, y = net_sentiment, 
+                                                        fill = album_name,
+                                                        text = paste("Song:", track_name,
+                                                                    "<br>Net sentiment:", net_sentiment))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~album_name, ncol = 2, scales = "free") +
+  scale_fill_manual(values = colorPaletteAlbums) +
+  theme_minimal() +
+  labs(
+    title = "The Emotional Spectrum Through Fan Perspective",
+    subtitle = "Net sentiment scores based on curated fan metadata and interpretations",
+    x = "",
+    y = "Net Sentiment (Positive - Negative Terms)"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    strip.text = element_text(size = 10, face = "bold"),
+    axis.text = element_text(size = 9),
+    axis.text.x = element_blank(),
+    legend.position = "none"
+  )
+
+interactive_plot_metadata <- ggplotly(p_metadata, tooltip = "text")
+interactive_plot_metadata
+```
+
+### Word Contribution in the Lore Analysis
+
+Understanding which specific terms drive the sentiment scores helps reveal the emotional vocabulary that fans associate with Taylor's music.
+
+```{r word-contributions-lore, echo=FALSE, fig.width=12, fig.align='center'}
+# Analyze word contributions to sentiment
+wordContributionsMetadata <- taylorMetadata %>%
+  count(metadata_word, sentiment) %>%
+  group_by(sentiment) %>%
+  slice_max(n, n = 20) %>%
+  mutate(metadata_word = reorder_within(metadata_word, n, sentiment)) %>%
+  ungroup()
+
+wordContributionsMetadata %>%
+  ggplot(aes(n, metadata_word, fill = sentiment)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = n), hjust = -0.2, size = 4) +
+  facet_wrap(~sentiment, scales = "free_y") +
+  scale_y_reordered() +
+  labs(
+    title = "Swift's Emotional Lexicon: Fan-Identified Sentiment Words",
+    subtitle = "The 40 most frequent sentiment-charged terms in fan metadata",
+    x = "Frequency",
+    y = NULL
+  ) +
+  theme_minimal() +
+  scale_fill_manual(values = c("negative" = "#D65D5D", "positive" = "#7CAE7A")) +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 11),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    strip.text = element_text(size = 12, face = "bold")
+  )
+```
+
+## Comparative Insights: Lyrics vs Lore Analysis
+
+```{r comparison-insights, echo=FALSE}
+# Calculate key statistics for comparison
+metadata_most_positive <- song_sentiment_scores_metadata %>%
+  slice_max(net_sentiment, n = 1, with_ties = FALSE)
+metadata_most_negative <- song_sentiment_scores_metadata %>%
+  slice_min(net_sentiment, n = 1, with_ties = FALSE)
+
+metadata_album_averages <- song_sentiment_scores_metadata %>%
+  group_by(album_name) %>%
+  summarize(avg_sentiment = mean(net_sentiment), .groups = "drop") %>%
+  arrange(desc(avg_sentiment))
+
+cat("FAN PERSPECTIVE INSIGHTS:\n")
+cat("Most positive song:", metadata_most_positive$track_name, 
+    "from", metadata_most_positive$album_name, 
+    "(Score:", metadata_most_positive$net_sentiment, ")\n\n")
+
+cat("Most negative song:", metadata_most_negative$track_name, 
+    "from", metadata_most_negative$album_name, 
+    "(Score:", metadata_most_negative$net_sentiment, ")\n\n")
+
+cat("Album rankings by fan-perceived sentiment:\n")
+for(i in 1:nrow(metadata_album_averages)) {
+  cat(i, ".", metadata_album_averages$album_name[i], 
+      "(Avg:", round(metadata_album_averages$avg_sentiment[i], 2), ")\n")
+}
+
+# Show top contributing words for context
+cat("\n TOP SENTIMENT DRIVERS:\n")
+top_positive <- wordContributionsMetadata %>% 
+  filter(sentiment == "positive") %>% 
+  slice_max(n, n = 5)
+
+top_negative <- wordContributionsMetadata %>% 
+  filter(sentiment == "negative") %>% 
+  slice_max(n, n = 5)
+
+cat("Most frequent positive terms:", paste(str_remove(top_positive$metadata_word, "___positive$"), collapse = ", "), "\n")
+cat("Most frequent negative terms:", paste(str_remove(top_negative$metadata_word, "___negative$"), collapse = ", "), "\n")
+```
+
+
+*The fan perspective offers a valuable complement to automated lyrical analysis, highlighting how community interpretation shapes our understanding of artistic emotional content. It is worth noting that this is the perspective of a single, however long-term, fan.*
+
+
+# Taylor Swift Sentiment Analysis: Lyrics vs Lore
+
+This analysis compares sentiment scores between Taylor Swift's song lyrics and their associated lore/metadata to identify the biggest differences between how songs are perceived through their lyrics versus their background stories.
+
+## Data Preparation
+
+First, we'll aggregate sentiment scores for each song from both the metadata (lore) and lyrics datasets.
+
+```{r aggregate-sentiment-scores}
+# Convert sentiment to numeric values for aggregation
+taylorMetadata <- taylorMetadata %>%
+  mutate(sentimentNumber = if_else(sentiment == "positive", 1, -1))
+
+# Aggregate metadata sentiment scores by song
+metadataSentimentScores <- taylorMetadata %>%
+  group_by(track_number, album_name, track_name) %>%
+  summarize(metadata_sentiment_score = mean(sentimentNumber, na.rm = TRUE))
+
+# Convert lyrics sentiment to numeric and aggregate
+taylorLyrics <- taylorLyrics %>%
+  mutate(sentimentNumber = if_else(sentiment == "positive", 1, -1))
+
+lyricsSentimentScores <- taylorLyrics %>%
+  group_by(track_number, album_name, track_name) %>%
+  summarize(lyrics_sentiment_score = mean(sentimentNumber, na.rm = TRUE))
+
+
+
+```
+
+## Combining and Analyzing Differences
+
+Next, we'll combine the data sets and calculate the absolute difference between lyrics and lore sentiment scores.
+
+```{r combine-and-analyze}
+# Combine the aggregated scores into one dataset
+combinedSentiments <- metadataSentimentScores %>%
+  inner_join(lyricsSentimentScores, by = c("track_number", "album_name", "track_name"))
+
+# Calculate the absolute difference between metadata and lyrics sentiment scores
+combinedSentiments <- combinedSentiments %>%
+  mutate(difference = abs(metadata_sentiment_score - lyrics_sentiment_score))
+
+# Correlation analysis
+correlation <- cor(combinedSentiments$metadata_sentiment_score, combinedSentiments$lyrics_sentiment_score, use = "complete.obs")
+
+# Identify outliers (songs with difference > 0.5)
+outliers <- combinedSentiments %>%
+  filter(difference > 0.5)
+
+# Print results
+print(paste("Correlation between Metadata and Lyrics Sentiment Scores:", 
+            round(correlation, 2)))
+print("Outliers:")
+print(outliers)
+```
+
+## Top 10 Songs with Largest Sentiment Differences
+
+Let's identify and visualize the songs where lyrics and lore sentiment differ the most.
+
+```{r top-20-differences}
+# Get top 20 songs with largest sentiment differences
+top_20_differences <- combinedSentiments %>%
+  arrange(desc(difference)) %>%
+  head(20)
+```
+
+## Visualization
+
+This visualization shows the sentiment scores for both lyrics and lore analysis, with connecting lines to highlight the differences.
+
+```{r sentiment-comparison-plot, fig.width=12}
+
+# Create the plot with shape-based legend
+ggplot(top_20_differences) +
+  # Connecting lines between lyrics and metadata scores
+  geom_segment(aes(x = lyrics_sentiment_score,
+                   xend = metadata_sentiment_score,
+                   y = reorder(track_name, difference),
+                   yend = reorder(track_name, difference),
+                   color = album_name),
+               size = 1.5, alpha = 0.7) +
+  
+  # Lyrics points (squares) - map to shape aesthetic for legend
+  geom_point(aes(x = lyrics_sentiment_score,
+                 y = reorder(track_name, difference),
+                 color = album_name,
+                 shape = "Lyrics"),  # Map to shape aesthetic
+             size = 4, alpha = 0.8) +
+  
+  # Metadata/Lore points (triangles) - map to shape aesthetic for legend
+  geom_point(aes(x = metadata_sentiment_score,
+                 y = reorder(track_name, difference),
+                 color = album_name,
+                 shape = "Lore"),  # Map to shape aesthetic
+             size = 4, alpha = 0.8) +
+  
+  # Define the shapes manually
+  scale_shape_manual(
+    name = "Sentiment Source",
+    values = c("Lyrics" = 15, "Lore" = 17),  # 15 = square, 17 = triangle
+    guide = guide_legend(
+      override.aes = list(color = "black", size = 4),  # Force legend to be black
+      order = 1  # Put shape legend first
+    )
+  ) +
+  
+  # Keep album colors for the connecting lines and points
+  scale_color_manual(
+    name = "Album",
+    values = colorPaletteAlbums,
+    guide = guide_legend(order = 2)  # Put color legend second
+  ) +
+  
+  labs(
+    title = "Top 20 Songs with Largest Sentiment Differences",
+    x = "",	
+    y = NULL,
+    caption = ""
+  ) +
+  
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 12, color = "gray30"),
+    plot.caption = element_text(hjust = 0.5, size = 10, color = "gray50"),
+    axis.text.y = element_text(size = 14),
+    axis.title.x = element_text(size = 14, face = "bold"),
+    legend.position = "right",
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(),
+    # Adjust legend spacing
+    legend.box = "vertical",
+    legend.margin = margin(t = 0, r = 0, b = 0, l = 10)
+  ) 
+
+
+```
+
+## Key Insights From The Lyrics x Lore Discrepancies
+
+The visualization uses connecting lines to show the gap between lyrics sentiment (square points) and lore sentiment (triangle points), with longer lines indicating larger differences. 
+
+From our earlier "Swift's Emotional Lexicon" analysis, we learned that "shake" is classified as a negative word in the Bing sentiment dictionary and ranks as the second most common negative word in Taylor's corpus. This explains why the song "Shake It Off," where "shake" appears 36 times, registers as highly negative in lyrics analysis despite being an upbeat anthem about resilience, creating the largest discrepancy in our dataset.
+
+Another key insight from this visualization is that 15 out of the 20 songs (75%) show lore sentiment being more negative than lyrics sentiment, while only 5 songs show the reverse pattern. This suggests that Taylor employs figures of speech in her songwritting, in which darker themes are "wrapped" in brigther linguistic packaging.
+
+Moreover, we can see some temporal distribution: 16 out of 20 songs (80%) come from Taylor's first five albums (Taylor Swift through 1989), with only 4 from her later work (Reputation through TTPD). This stark imbalance suggests an evolution in her songwriting approach across career phases.
+
+These findings suggest Taylor's early career was characterized by more complex emotional layering, such as using seemingly positive or neutral language to convey deeper melancholy or using metaphorical language that masked the true emotional weight of her experiences. This likely reflects both her youth and the unique pressures she must have faced as a teenager in the spotlight.
+
+When we also take into account the context of her early career, this pattern feels compelling. Her debut album was released when she was only 16, and during this first part of her career, her personal relationships were heavily dissected in the media with some of her avail. This was the era she would also leave secret messages in her lyrics books hinting at who each song was written for, which does match this lyrical tendency of encrypting what she actually means. 
+
+The shift towards more direct expression in her later work, particularly after the very traumatic Snakegate, may reflect both artistic maturation and a conscious response to years of invasive media attention. It feels paradoxal, but perhaps by experiencing the consequences of transparency, she might have developed a more protective approach to her private life while becoming more emotionally direct in her lyrics. Upon the release of Reputation, her first album after snakegate, she announced she would not be interviewed by anyone with her infamous quote "There will be no further explanation. There will just be Reputation". 
+
+Her recent work features less emotional camouflage, with the surface-level sentiment of her words aligning more with the underlying emotional narrative, suggesting she has found ways to show her vulnerability in her art without sacrificing her privacy. 
+
+
+# Additional reading:
+
+*Repetition in Taylor Swift Discography: https://www.reddit.com/r/TaylorSwift/comments/17linx2/taylor_swift_songs_ordered_by_how_many_times_the/ *
+
+*Snakegate timeline: https://www.cosmopolitan.com/uk/entertainment/news/a41965/taylor-swift-kanye-west-feud-timeline/*
+
+*What would Taylor discography be like if snakegate didn't happen? https://www.reddit.com/r/TaylorSwift/comments/192w7pv/what_would_taylors_6th_album_be_if_it_wasnt_for/*
+
+
