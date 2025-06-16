@@ -131,7 +131,6 @@ colorGroups <- c(
   "purple-pink" = "purples",
   "lavender" = "purples",
   "lilac" = "purples",
-  
   # Yellows
   "amber" = "yellows",
   "bronze" = "yellows",
@@ -142,7 +141,6 @@ colorGroups <- c(
   "rose golden" = "yellows",
   "orange" = "yellows",
   "tangerine" = "yellows",   # Added
-  
   # Reds
   "blood monlit" = "reds",
   "blood-soaked" = "reds",
@@ -163,7 +161,6 @@ colorGroups <- c(
   "scarlet" = "reds",       # Added
   "scarlet maroon" = "reds",
   "wine-stained" = "reds",
-  
   # Blues
   "aquamarine" = "blues",   # Added
   "blue" = "blues",         # Added
@@ -176,14 +173,12 @@ colorGroups <- c(
   "opal" = "blues",
   "pale blue" = "blues",
   "sapphire" = "blues",
-  
   # Greens
   "aurora borealis green" = "greens",
   "evergreen" = "greens",
   "green" = "greens",
   "key lime green" = "greens",
   "teal" = "greens",        # Added
-  
   # Colorful
   "colour" = "colorful",    # Added
   "colours" = "colorful",   # Added
@@ -194,10 +189,8 @@ colorGroups <- c(
   "rainbow" = "colorful",
   "screaming colour" = "colorful", # Added
   "stained glass" = "colorful",
-  
   # Black and white
   "black and white" = "black and white",
-  
   # Whites
   "bleached" = "whites",    # Added
   "greige" = "whites",
@@ -205,7 +198,6 @@ colorGroups <- c(
   "gray" = "whites",        # Added
   "white" = "whites",       # Added
   "snow white" = "whites",  # Added
-  
   # Blacks
   "black" = "blacks",       # Added
   "blackout" = "blacks",    # Added
@@ -214,3 +206,16 @@ colorGroups <- c(
   "darkest gray" = "blacks", # Added
   "silver" = "blacks"
 )
+
+colorPaletteGroups <- c(
+  "yellows" = "#FFD700",
+  "blues" = "#0000FF",
+  "greens" = "#008000",
+  "blacks" = "#000000",
+  "black and white" = "#C0C0C0",
+  "whites" = "#FFFFFF",
+  "reds" = "#FF0000",
+  "colorful" = "#FF4500",
+  "purples" = "#8A2BE2"
+)
+  

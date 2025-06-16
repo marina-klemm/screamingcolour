@@ -311,6 +311,58 @@ Note
 </div>
 </div>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> <span class="st">"raw_data/album_info_metadata_neutral.xlsx"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(allSongsMetadata, <span class="at">sheet =</span> <span class="st">"metadata"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"code/colour_palletts.r"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>rawColorData <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_MK, <span class="st">";"</span>))),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">meaning =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_meaningMK, <span class="st">";"</span>)))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(colour) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(meaning))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>colorSentimentScores <span class="ot">&lt;-</span> rawColorData <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">meaning =</span> <span class="fu">trimws</span>(meaning),  </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">score =</span> <span class="fu">case_when</span>(</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"positive"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"neutral"</span> <span class="sc">~</span> <span class="fl">0.5</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"negative"</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Calculate average sentiment for each individual color</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>individualColorSentiments <span class="ot">&lt;-</span> colorSentimentScores <span class="sc">%&gt;%</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(colour) <span class="sc">%&gt;%</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">avgSentiment =</span> <span class="fu">mean</span>(score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">mentionCount =</span> <span class="fu">n</span>()</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourGroup <span class="ot">&lt;-</span> colorGroups[individualColorSentiments<span class="sc">$</span>colour]</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourHexColour <span class="ot">&lt;-</span><span class="fu">sapply</span>(individualColorSentiments<span class="sc">$</span>colour, \(x) colorPaletteColours[[x]])</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourGroupColour <span class="ot">&lt;-</span><span class="fu">sapply</span>(individualColorSentiments<span class="sc">$</span>colourGroup, \(x) colorPaletteGroups[[x]])</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>individualColorSentiments</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 69 × 6
+   colour                avgSentiment mentionCount colourGroup   colourHexColour
+   &lt;chr&gt;                        &lt;dbl&gt;        &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;          
+ 1 amber                        0.5              1 yellows       #FFBF00        
+ 2 aquamarine                   1                1 blues         #7FFFD4        
+ 3 aurora borealis green        1                2 greens        #78E08F        
+ 4 black                        0.5              9 blacks        #000000        
+ 5 black and white              0.25             4 black and wh… #C0C0C0        
+ 6 blackout                     1                1 blacks        #1A1A1A        
+ 7 bleached                     0.5              1 whites        #F5F5DC        
+ 8 blood monlit                 1                1 reds          #8A0303        
+ 9 blood-soaked                 0                2 reds          #8B0000        
+10 blue                         0.409           22 blues         #0000FF        
+# ℹ 59 more rows
+# ℹ 1 more variable: colourGroupColour &lt;chr&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
 
 </div>
 

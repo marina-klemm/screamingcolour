@@ -1,65 +1,55 @@
 # Colour Sentiments
 
+
+<object data="plots/colour_sentiments.svg"></object>
+
+
 ```{r}
 #| echo: FALSE
+#| message: FALSE
 load("onload.RData")
 require(tidyverse)
 ```
 
+
+
+## Correspondance analysis
+
+
 ```{r}
 #| warning: FALSE
-allSongsMetadata <- "raw_data/album_info_metadata_neutral.xlsx"
-allSongsMetadata <- readxl::read_excel(allSongsMetadata, sheet = "metadata")
-source("code/colour_palletts.r")
-rawColorData <- data.frame(
-    colour = trimws(unlist(strsplit(allSongsMetadata$colour_MK, ";"))),
-    meaning = trimws(unlist(strsplit(allSongsMetadata$colour_meaningMK, ";")))
-) %>% filter(!is.na(colour) & !is.na(meaning))
-
-colorSentimentScores <- rawColorData %>%
-    mutate(
-        meaning = trimws(meaning),  
-        score = case_when(
-            tolower(meaning) == "positive" ~ 1,
-            tolower(meaning) == "neutral" ~ 0.5,
-            tolower(meaning) == "negative" ~ 0,
-            TRUE ~ NA_real_
-        )
-    )
-
-## Calculate average sentiment for each individual color
-individualColorSentiments <- colorSentimentScores %>%
-    group_by(colour) %>%
-    summarise(
-        avgSentiment = mean(score, na.rm = TRUE),
-        mentionCount = n()
-    ) %>%
-    ungroup()
-
-individualColorSentiments$colourGroup <- colorGroups[individualColorSentiments$colour]
-## Beta regression basic
-mod <- betareg::betareg(avgSentiment ~ colourGroup, data = individualColorSentiments)
-mod |> summary()
-require(mgcv)
-gam <- gam(avgSentiment ~ colourGroup, family = betar(link="logit"), data = individualColorSentiments)
-summary(gam)
-new.y <- predict(gam, se.fit = TRUE, type="response")
-
-## correspondance analysis
-
-table(colorSentimentScores$colour, colorSentimentScores$meaning)
 colorSentimentScores$colourGroup <- colorGroups[colorSentimentScores$colour]
 cols.df <- as.data.frame.matrix(table(colorSentimentScores$colourGroup, colorSentimentScores$meaning))
 cols.df
-chisq.test(cols.df)
-coa <- ade4::dudi.coa(cols.df, scannf = FALSE, nf = 2)
+chi <- chisq.test(cols.df)
+chi
+
+library(corrplot)
+corrplot(chi$residuals, is.corr = FALSE, cl.pos = FALSE)
+
+
+
+
+
+## coa <- ade4::dudi.coa(cols.df, scannf = FALSE, nf = 2)
+coa <- FactoMineR::CA(cols.df)
 
 library(factoextra) 
+## row/colour contribution asymmetric biplot 
 fviz_ca_biplot(coa, repel = TRUE, col.col = "brown", col.row = "purple",
-               labelsize = 5, pointsize = 5) + ggtitle("") +
-  theme(legend.text = element_text(size = 25),
-        axis.title.x.bottom = element_text(size = 15),
-        axis.title.y.left = element_text(size = 15),
-        axis.text = element_text(size = 15)) +
-  ylim(c(-0.5,0.5))
+               labelsize = 5, pointsize = 5, map = "rowprincipal") + ggtitle("") +
+  theme_void()
+
+## If the angle between two arrows is acute, then their is a strong association between the corresponding row and column.
+
+# Dimension description
+res.desc <- FactoMineR::dimdesc(coa, axes = c(1,2))
+# Description of dimension 1 by row points
+res.desc[[1]]$row
+# Description of dimension 1 by column points
+res.desc[[1]]$col
+# Description of dimension 2 by row points
+res.desc[[2]]$row
+# Description of dimension 2 by column points
+res.desc[[2]]$col
 ```

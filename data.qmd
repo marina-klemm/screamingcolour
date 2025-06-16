@@ -56,8 +56,50 @@ outfits
 ```
 
 
+
+```{r}
+#| warning: FALSE
+allSongsMetadata <- "raw_data/album_info_metadata_neutral.xlsx"
+allSongsMetadata <- readxl::read_excel(allSongsMetadata, sheet = "metadata")
+source("code/colour_palletts.r")
+rawColorData <- data.frame(
+    colour = trimws(unlist(strsplit(allSongsMetadata$colour_MK, ";"))),
+    meaning = trimws(unlist(strsplit(allSongsMetadata$colour_meaningMK, ";")))
+) %>% filter(!is.na(colour) & !is.na(meaning))
+
+colorSentimentScores <- rawColorData %>%
+    mutate(
+        meaning = trimws(meaning),  
+        score = case_when(
+            tolower(meaning) == "positive" ~ 1,
+            tolower(meaning) == "neutral" ~ 0.5,
+            tolower(meaning) == "negative" ~ 0,
+            TRUE ~ NA_real_
+        )
+    )
+
+## Calculate average sentiment for each individual color
+individualColorSentiments <- colorSentimentScores %>%
+    group_by(colour) %>%
+    summarise(
+        avgSentiment = mean(score, na.rm = TRUE),
+        mentionCount = n()
+    ) %>%
+    ungroup()
+
+individualColorSentiments$colourGroup <- colorGroups[individualColorSentiments$colour]
+individualColorSentiments$colourHexColour <-sapply(individualColorSentiments$colour, \(x) colorPaletteColours[[x]])
+individualColorSentiments$colourGroupColour <-sapply(individualColorSentiments$colourGroup, \(x) colorPaletteGroups[[x]])
+
+individualColorSentiments
+```
+
+
 ```{r}
 #| eval: FALSE
 #| echo: FALSE
 save.image(file = "onload.RData")
+# convert .RData -> .rdb/.rdx
+e <- local({load("onload.RData"); environment()})
+tools:::makeLazyLoadDB(e, "onload")
 ```
