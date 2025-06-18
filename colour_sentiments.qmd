@@ -58,7 +58,7 @@ So, as we suspected from the table alone it seems likely that there is some depe
 coa <- FactoMineR::CA(cols.df)
 ```
 
-The biplot above shows the relative positions of the rows (colours) and the columns (sentiments). Now, we are not interested in representing the contingency table above in a lower dimension space using correspondence analysis. Rather, we are interested in the relative associations between colours and sentiment. The plot above is termed a *symmetric plot* and shows a *global pattern*: the distance between any row points (colours) or column points (sentiments) gives a measure of their similarity or dissimilarity, we cannot from this plot compare associations between colours and sentiments directly. However, in general we can see that *Yellows*, *Purples*, *Greens* and *Colorful* are mainly mentioned in association with *Positive* sentiments etc.
+The biplot above shows the relative positions of the rows (colours) and the columns (sentiments). This is not a typical scatter plot and distances* between points cannot neccesarily be interpreted as you would do if it were. Now, we are not interested in representing the contingency table above in a lower dimension space using correspondence analysis. Rather, we are interested in the relative associations between colours and sentiment. The plot above is termed a *symmetric plot* and shows a *global pattern*: the distance between any row points (colours) or column points (sentiments) gives a measure of their similarity or dissimilarity, we cannot from this plot compare associations between colours and sentiments directly. However, in general we can see that *Yellows*, *Purples*, *Greens* and *Colorful* are mainly mentioned in association with *Positive* sentiments etc.
 
 In order to interpret the distance between sentiments and colours we need to use an *asymmetric biplot* (see below).
 
@@ -90,9 +90,11 @@ coa$row$cos2
 corrplot(coa$row$cos2, is.corr = FALSE, cl.pos = FALSE)
 ```
 
-Again, this is not a traditional correlation plot. Each entry represents the association between the colours (row vaiables) and the dimensions. From this all colours (bar *Blacks*) are strongly associated with the *feelings dimension*. Mentions of the B;acks* colour groupings are morse associated with Dim 2 the *conviction* dimension; this, is also evident from the contingency table above where most mentions of this group were associated with *Neutral* sentiments.
+Again, this is not a traditional correlation plot. Each entry represents the association between the colours (row vaiables) and the dimensions. From this all colours (bar *Blacks*) are strongly associated with the *feelings dimension*. Mentions of the *Blacks* colour groupings are more associated with Dim 2 the *conviction* dimension; this, is also evident from the contingency table above where most mentions of this group were associated with *Neutral* sentiments.
 
 Ideally, what we'd like to do is both compare the association between colour groups AND the associations between colour groups and sentiments. To do this we create an asymmetric biplot and represent columns (*sentiment*) in row (*colours*) in space (by setting `map = "rowprincipal"` in the call to `fviz_ca_biplot()` below). Doing this also better shows the relationships between the colours. 
+
+`rowprincipal` normalization: the distances between the row labels are meaningful and consistent with those shown in the principal normalization, but the differences between the column coordinates are now misleading. `columnprincipal`: the distances between the row points are not correct
 
 
 ```{r} 
@@ -100,10 +102,11 @@ Ideally, what we'd like to do is both compare the association between colour gro
 fviz_ca_biplot(coa, repel = TRUE, col.col = "brown", col.row = "purple",
                map = "rowprincipal", arrows = c(TRUE,TRUE)) + ggtitle("") +
   theme_void()
+
 ```
 
 
-Adding arrows to the biplot let's us assess the degree of association between colours and sentiments. An acute angle between two arrows indicates a strong association between the corresponding row (colour) and column (sentiment). From the plot above *Purples* have the strongest association with *Positive* sentiment, *Reds* & *Blues* with *Negative* and *Blacks* with *Neutral*. 
+Adding arrows to the biplot let's us assess the degree of association between colours and sentiments. Again, this is not a typical scatter plot! An acute angle between two arrows indicates a strong association between the corresponding row (colour) and column (sentiment). From the plot above *Purples* have the strongest association with *Positive* sentiment, *Reds* & *Blues* with *Negative* and *Blacks* with *Neutral*. In summary, acute angles between *colours* and *sentiment* suggest positive association, right angles suggest independence, and obtuse angles suggest negative association.
 
 
 ### Reducing dimensions
@@ -115,7 +118,50 @@ coa$eig
 
 ```
 
-Dim 1 (i.e., *feelings*) explains ~82% of the total variation. Pretty much most of it! This makes sense as it is basically a rotation of the linear sentiment scale we initially assumed when scoring the lyrics! Let's have a look as this one dimension on it's own, recall that we'd like to do this and examining the association between colours (i.e., a spce that represent columns (*sentiment*) in row (*colours*) in space).
+Dim 1 (i.e., *feelings*) explains ~82% of the total variation. Pretty much most of it! This makes sense as it is basically a rotation of the linear sentiment scale we initially assumed when scoring the lyrics! Let's have a look as this one dimension on it's own, recall that we'd like to do this and examining the association between colours (i.e., a sapce that represent columns (*sentiment*) in row (*colours*) in space).
+
+
+```{r}
+## grabbing coordinates from plot
+p <- fviz_ca_biplot(coa, map = "rowprincipal")
+tmp <- ggplot_build(p)
+ro <- tmp$data[[2]][,c(1,2,3)]  
+ro$colour <- colorPaletteGroups[tolower(ro$label)]
+sents <- tmp$data[[6]][, c(1, 2, 3)]
+
+## atan2 counterclockwise
+angles <- function(rows, cols, row_names, col_names){
+  res <- matrix(0, nrow = nrow(rows), ncol = nrow(cols))
+  for(i in 1:nrow(cols)){
+    angle = atan2(cols[i, 2], cols[i, 1]) - atan2(rows[,2], rows[,1]) 
+    ## make between -pi (-180) and pi (180)
+    angle = ifelse(angle > pi, angle - (2*pi), ifelse(angle <= -pi, angle + (2*pi), angle)) *(180/pi)
+    res[, i] = angle
+  }
+  rownames(res) <- row_names
+  colnames(res) <- col_names
+  return(res)
+}
+## 'distances' between rows and cols in row space
+rc <- angles(ro[, 1:2], cols = sents[,1:2], row_names = ro$label, col_names = sents$label)
+## plotting relative to neutral
+rcls <- data.frame(x = rc[,2], col = ro$colour, lab = ro$label)
+## 'distances' between cols in row space
+cc <- angles(sents[, 1:2], cols = sents[,1:2], row_names = sents$label, col_names = sents$label)
+ccls <- data.frame(x = cc[,2], lab = sents$label)
+## plot on the "angle" line
+ggplot(rcls, aes(x = x, y = 1, col = col, label = lab)) +
+  geom_point() + 
+  ggrepel::geom_text_repel(aes(col = col), box.padding = 1.5, 
+                            arrow = arrow(length = unit(0.1, "inches")), alpha = 0.7, size = 4) +
+  scale_color_identity() +
+  geom_hline(yintercept = 1, alpha = 0.3, col = "grey") +
+  geom_text(data = ccls, size = 6, col = "darkgrey") + theme_void() +
+  theme(panel.background = element_rect(fill = "#D9D7B6"))
+
+```
+
+The plot above is a 1D representation of the angles between *colours* and *sentiments* following the `rowprinciple`. Clearly *Blues* and *Reds* are strongly associated with *Negative* and *Blacks* are mostly *Neutral* etc. NOte that this plot is relative to *Neutral* sentiment.
 
 ## Cluster analysis of CA colour scores
 
@@ -191,6 +237,11 @@ fviz_cluster(k4, data = data) + theme_bw()
 
 Makes sense based on even our initial CA biplot!
 
+```{r}
+#| eval: FALSE
+#| echo: FALSE
+res.hcpc <- HCPC(coa, cluster.CA = "rows")
+```
 
 
 
