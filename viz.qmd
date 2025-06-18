@@ -52,6 +52,7 @@ ggplot(outfits, aes(x = reorder(DressName, -n), y = n, fill = DressName)) +
 
 
 ```{r}
+#| eval: FALSE
 #| fig-width: 7
 #| fig-height: 7
 surpriseSongsDressColours$groupName <- sapply(surpriseSongsDressColours$DressName, function(color) {
