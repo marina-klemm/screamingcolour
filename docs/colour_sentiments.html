@@ -159,17 +159,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">Taylor Swift’s Eras Tour Color-Music Relationships</a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Screaming Colors: A Swiftie Guide to Eras Tour Stats</a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Data wrangling</span></a>
+  <a href="./data.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The data!</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./viz.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Visualizing surprise song outfits</span></a>
+  <a href="./viz.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Visualizing the data</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -365,7 +365,7 @@ dim 2 0.04636992                17.5124                          100.0000</code>
 </div>
 <p>Dim 1 (i.e., <em>feelings</em>) explains ~82% of the total variation. Pretty much most of it! This makes sense as it is basically a rotation of the linear sentiment scale we initially assumed when scoring the lyrics! Let’s have a look as this one dimension on it’s own, recall that we’d like to do this and examining the association between colours (i.e., a sapce that represent columns (<em>sentiment</em>) in row (<em>colours</em>) in space).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="do">## grabbing coordinates from plot</span></span>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="do">## grabbing coordinates from `rowprincipal` plot</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">fviz_ca_biplot</span>(coa, <span class="at">map =</span> <span class="st">"rowprincipal"</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">ggplot_build</span>(p)</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>ro <span class="ot">&lt;-</span> tmp<span class="sc">$</span>data[[<span class="dv">2</span>]][,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)]  </span>
@@ -389,8 +389,8 @@ dim 2 0.04636992                17.5124                          100.0000</code>
 <span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>rc <span class="ot">&lt;-</span> <span class="fu">angles</span>(ro[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">cols =</span> sents[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">row_names =</span> ro<span class="sc">$</span>label, <span class="at">col_names =</span> sents<span class="sc">$</span>label)</span>
 <span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="do">## plotting relative to neutral</span></span>
 <span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>rcls <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> rc[,<span class="dv">2</span>], <span class="at">col =</span> ro<span class="sc">$</span>colour, <span class="at">lab =</span> ro<span class="sc">$</span>label)</span>
-<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="do">## 'distances' between cols in row space</span></span>
-<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>cc <span class="ot">&lt;-</span> <span class="fu">angles</span>(sents[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">cols =</span> sents[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">row_names =</span> sents<span class="sc">$</span>label, <span class="at">col_names =</span> sents<span class="sc">$</span>label)</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="do">## 'distances' between cols in row space (i.e., standard)</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>cc <span class="ot">&lt;-</span> <span class="fu">angles</span>(sents[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">cols =</span> sents[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">row_names =</span> sents<span class="sc">$</span>label, <span class="at">col_names =</span> sents<span class="sc">$</span>label)</span>
 <span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>ccls <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> cc[,<span class="dv">2</span>], <span class="at">lab =</span> sents<span class="sc">$</span>label)</span>
 <span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="do">## plot on the "angle" line</span></span>
 <span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rcls, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="dv">1</span>, <span class="at">col =</span> col, <span class="at">label =</span> lab)) <span class="sc">+</span></span>
@@ -400,12 +400,13 @@ dim 2 0.04636992                17.5124                          100.0000</code>
 <span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_identity</span>() <span class="sc">+</span></span>
 <span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">col =</span> <span class="st">"grey"</span>) <span class="sc">+</span></span>
 <span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> ccls, <span class="at">size =</span> <span class="dv">6</span>, <span class="at">col =</span> <span class="st">"darkgrey"</span>) <span class="sc">+</span> <span class="fu">theme_void</span>() <span class="sc">+</span></span>
-<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"#D9D7B6"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">180</span>, <span class="dv">180</span>), <span class="at">y =</span> <span class="dv">1</span>), <span class="at">label =</span> <span class="fu">c</span>(<span class="fu">expression</span>(<span class="st">"-pi"</span>), <span class="fu">expression</span>(<span class="st">"pi"</span>)), <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">parse =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"oldlace"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="colour_sentiments_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>The plot above is a 1D representation of the angles between <em>colours</em> and <em>sentiments</em> following the <code>rowprinciple</code>. Clearly <em>Blues</em> and <em>Reds</em> are strongly associated with <em>Negative</em> and <em>Blacks</em> are mostly <em>Neutral</em> etc. NOte that this plot is relative to <em>Neutral</em> sentiment.</p>
+<p>The plot above is a 1D representation of the angles between <em>colours</em> and <em>sentiments</em> following the <code>rowprinciple</code>. Clearly <em>Blues</em> and <em>Reds</em> are strongly associated with <em>Negative</em> and <em>Blacks</em> are mostly <em>Neutral</em> etc. Note that this plot is relative to <em>Neutral</em> sentiment.</p>
 </section>
 </section>
 <section id="cluster-analysis-of-ca-colour-scores" class="level2" data-number="4.3">
@@ -481,16 +482,18 @@ Yellows         -0.5975927  0.12702125</code></pre>
 <p><img src="colour_sentiments_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>This is a rather ‘ad hoc’ method, but from the barplot we cannot see much relative tangible reduction in SS after four clusters. So, let’s look at these below.</p>
+<p>This is a rather ‘ad hoc’ method, but from the barplot we cannot see much relative tangible reduction in SS after three (maybe four) clusters. So, let’s look at these below.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(k4, <span class="at">data =</span> data) <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_cluster</span>(k3, <span class="at">data =</span> data) <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="colour_sentiments_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Makes sense based on even our initial CA biplot!</p>
+<p>Makes sense based on even our initial CA biplot! Alternatively, we cn use <code>HCPC</code>, which performs agglomerative hierarchical clustering on CA results.</p>
 <div class="cell">
-
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>hcpc <span class="ot">&lt;-</span> <span class="fu">HCPC</span>(coa, <span class="at">cluster.CA =</span> <span class="st">"rows"</span>, <span class="at">nb.clust =</span> <span class="dv">3</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hcpc,<span class="at">choice =</span> <span class="st">"3D.map"</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hcpc,<span class="at">choice =</span> <span class="st">"tree"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

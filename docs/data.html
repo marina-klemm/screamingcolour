@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Colours of the Taylor Swift Universe - 1&nbsp; Data wrangling</title>
+<title>Colours of the Taylor Swift Universe - 1&nbsp; The data!</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -133,7 +133,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Data wrangling</span></h1>
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The data!</span></h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -158,17 +158,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">Taylor Swift’s Eras Tour Color-Music Relationships</a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Screaming Colors: A Swiftie Guide to Eras Tour Stats</a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Data wrangling</span></a>
+  <a href="./data.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The data!</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./viz.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Visualizing surprise song outfits</span></a>
+  <a href="./viz.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Visualizing the data</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -191,14 +191,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-lore-dataset" id="toc-the-lore-dataset" class="nav-link active" data-scroll-target="#the-lore-dataset"><span class="toc-section-number">1.1</span>  The Lore dataset</a></li>
+  <li><a href="#sec-surp" id="toc-sec-surp" class="nav-link" data-scroll-target="#sec-surp"><span class="toc-section-number">1.2</span>  Surprise Songs Data Set</a>
+  <ul class="collapse">
+  <li><a href="#an-overview-of-surprise-song-dresses-across-the-whole-tour" id="toc-an-overview-of-surprise-song-dresses-across-the-whole-tour" class="nav-link" data-scroll-target="#an-overview-of-surprise-song-dresses-across-the-whole-tour"><span class="toc-section-number">1.2.1</span>  An overview of surprise song dresses across the whole tour</a></li>
+  </ul></li>
+  <li><a href="#simple-colour-sentiment-dataset" id="toc-simple-colour-sentiment-dataset" class="nav-link" data-scroll-target="#simple-colour-sentiment-dataset"><span class="toc-section-number">1.3</span>  Simple colour sentiment dataset</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Data wrangling</span></h1>
+<h1 class="title d-none d-lg-block"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The data!</span></h1>
 </div>
 
 
@@ -231,25 +242,79 @@ Note
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(tidyverse)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(readxl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<section id="the-lore-dataset" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="the-lore-dataset"><span class="header-section-number">1.1</span> The Lore dataset</h2>
+<p>The <a href="https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/album_info_metadata.xlsx"><code>album_info_metadata.xlsx</code></a> file includes the fan lore: sentiment, message, keywords, muse, color meaning, notes, secret messages, color mentions and their meanings (between positive, neutral or negative). The sentiments were chosen from a list of feelings compiled by the Hoffman Institute Foundation (May/2015 review). Soon it was realized that a single sentiment was not enough to completely differentiate between songs and the message and keywords were also created to add more information to single out a song. For example, while <em>Tim McGraw</em> and <em>Back to December</em> both have the overall <em>nostalgic</em> feeling, the first carries a <em>falling in love</em> message, while the latter is about <em>longing</em>. Likewise, <em>Tim McGraw</em> keywords are <em>romantic, first love, country music</em>, while <em>Back to December</em> keywords are <em>breakup, regretful, heartbreak</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">## reading in data</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours <span class="ot">&lt;-</span>  readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"raw_data/surprise_songs.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"List"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(surpriseSongsDressColours<span class="sc">$</span>Date)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="do">## map hex colour to outfit</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>dressColorMapping <span class="ot">&lt;-</span> <span class="fu">unique</span>(surpriseSongsDressColours <span class="sc">%&gt;%</span> <span class="fu">select</span>(DressName, ColourHex1))</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>colorPaletteDresses <span class="ot">&lt;-</span> <span class="fu">setNames</span>(dressColorMapping<span class="sc">$</span>ColourHex1, dressColorMapping<span class="sc">$</span>DressName)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>pathToDressColours <span class="ot">&lt;-</span> <span class="st">"dress_images/images_high_res/cropped/"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"raw_data/album_info_metadata.xlsx"</span>)[,<span class="dv">1</span><span class="sc">:</span><span class="dv">29</span>]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>allSongsMetadata </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 240 × 29
+   album_name ep    album_release       track_number track_name artist featuring
+   &lt;chr&gt;      &lt;lgl&gt; &lt;dttm&gt;                     &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt;    
+ 1 Red        FALSE 2021-11-12 00:00:00            6 "22"       Taylo… &lt;NA&gt;     
+ 2 1989       FALSE 2023-10-27 00:00:00           17 "\"Slut!\… Taylo… &lt;NA&gt;     
+ 3 reputation FALSE 2017-11-10 00:00:00            1 "...Ready… Taylo… &lt;NA&gt;     
+ 4 Taylor Sw… FALSE 2006-10-24 00:00:00           14 "A Perfec… Taylo… &lt;NA&gt;     
+ 5 Taylor Sw… FALSE 2006-10-24 00:00:00            4 "A Place … Taylo… &lt;NA&gt;     
+ 6 Lover      FALSE 2019-08-23 00:00:00           15 "Afterglo… Taylo… &lt;NA&gt;     
+ 7 Red        FALSE 2021-11-12 00:00:00            5 "All Too … Taylo… &lt;NA&gt;     
+ 8 Red        FALSE 2021-11-12 00:00:00           30 "All Too … Taylo… &lt;NA&gt;     
+ 9 1989       FALSE 2023-10-27 00:00:00            5 "All You … Taylo… &lt;NA&gt;     
+10 Midnights  FALSE 2022-10-21 00:00:00            3 "Anti-Her… Taylo… &lt;NA&gt;     
+# ℹ 230 more rows
+# ℹ 22 more variables: bonus_track &lt;lgl&gt;, promotional_release &lt;dttm&gt;,
+#   single_release &lt;dttm&gt;, track_release &lt;dttm&gt;, danceability &lt;dbl&gt;,
+#   energy &lt;dbl&gt;, key &lt;dbl&gt;, loudness &lt;dbl&gt;, mode &lt;dbl&gt;, speechiness &lt;dbl&gt;,
+#   acousticness &lt;dbl&gt;, instrumentalness &lt;dbl&gt;, liveness &lt;dbl&gt;, valence &lt;dbl&gt;,
+#   tempo &lt;dbl&gt;, time_signature &lt;dbl&gt;, duration_ms &lt;dbl&gt;, explicit &lt;lgl&gt;,
+#   key_name &lt;chr&gt;, mode_name &lt;chr&gt;, key_mode &lt;chr&gt;, lyrics &lt;chr&gt;</code></pre>
 </div>
+</div>
+</section>
+<section id="sec-surp" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="sec-surp"><span class="header-section-number">1.2</span> Surprise Songs Data Set</h2>
+<p>Parallel to the development of the metadata (aka lore) database, a few details about each surprise song performance were noted down in the <a href="https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/surprise_songs.xlsx"><code>surprise_songs.xlsx</code></a> data set. Each concert had a few rows, one per surprise song (Taylor performed two surprise songs in each of the concerts, the first one on the guitar and the second one on the piano). Besides the two regular surprise songs, she occasionally started mashing up songs in this acoustic set; although the first mashup happened in her second night in Ohio (July 1st, 2023), they became more common from the second night of her Melbourne concert (February 17th, 2024). Thus, three columns account for it: Mashups, with the options none, one or two; <code>Mashup</code>, with the name of the first song mashed up with Song title; and, <code>Mashup2</code>, with yet a third song that was mashed up with Song title and Mashup (in the case of Mashups = Two).</p>
+<p>Besides the song titles and mashups, the surprise songs data set includes the names of the city, state, country, stadium and dates in which she performed. Moreover, the name of the dress she was wearing is included in the column <code>DressName</code>, and its color in descriptive terms is found on <code>Colour1</code>, its HEX formatting on <code>ColourHex1</code>, and its RGB formatting on <code>ColourRGB1</code>. As some dresses like <em>Flamingo pink</em> and <em>Sunset orange</em> are made up of an ombre of two colors, their name and codes are also found on <code>Colour2</code>, <code>ColourHex2</code> and <code>ColourRGB2</code>. Lastly, other details are also included: who she was dating at the time in the <code>Relationship</code> column; which leg of the tour (First legs, European, Final leg), which night on that city, which instrument she played while singing said song, special guests in the audience, and notes for overall remarks such as: <em>on July 9th, she sang Last Kiss as one the surprise songs, and that date is mentioned on the song</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Need only consider first element of each concerts as the</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="do">## same outfit was worn for all surprise songs</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="do">## for anyone concert</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert <span class="ot">&lt;-</span> surpriseSongsDressColours <span class="sc">%&gt;%</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Date) <span class="sc">%&gt;%</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(Date, Order) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">## reading in data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours <span class="ot">&lt;-</span>  readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"raw_data/surprise_songs.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"List"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(surpriseSongsDressColours<span class="sc">$</span>Date)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 443 × 26
+   `Song title`         Mashups Mashup Mashup2 Guest City  State Country Stadium
+   &lt;chr&gt;                &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  
+ 1 mirrorball           None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Glen… Ariz… US      State …
+ 2 Tim McGraw           None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Glen… Ariz… US      State …
+ 3 State Of Grace       None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Glen… Ariz… US      State …
+ 4 this is me trying    None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Glen… Ariz… US      State …
+ 5 Our Song             None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Las … Neva… US      Allegi…
+ 6 Snow On The Beach    None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Las … Neva… US      Allegi…
+ 7 cowboy like me       None    &lt;NA&gt;   &lt;NA&gt;    Marc… Las … Neva… US      Allegi…
+ 8 White Horse          None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Las … Neva… US      Allegi…
+ 9 Ours                 None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Arli… Texas US      AT&amp;T   
+10 Sad Beautiful Tragic None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Arli… Texas US      AT&amp;T   
+# ℹ 433 more rows
+# ℹ 17 more variables: Date &lt;date&gt;, DressName &lt;chr&gt;, Legs &lt;chr&gt;,
+#   Relationship &lt;chr&gt;, Start &lt;dttm&gt;, End &lt;dttm&gt;, Colour1 &lt;chr&gt;,
+#   ColourHex1 &lt;chr&gt;, ColourRGB1 &lt;chr&gt;, Colour2 &lt;chr&gt;, ColourHex2 &lt;chr&gt;,
+#   ColourRGB2 &lt;chr&gt;, `Night #` &lt;dbl&gt;, Order &lt;dbl&gt;, Instrument &lt;chr&gt;,
+#   `Special Annoucement` &lt;chr&gt;, Notes &lt;chr&gt;</code></pre>
+</div>
+</div>
+<section id="an-overview-of-surprise-song-dresses-across-the-whole-tour" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="an-overview-of-surprise-song-dresses-across-the-whole-tour"><span class="header-section-number">1.2.1</span> An overview of surprise song dresses across the whole tour</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Need only consider first element of each concerts as the</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="do">## same outfit was worn for all surprise songs</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="do">## for anyone concert</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert <span class="ot">&lt;-</span> surpriseSongsDressColours <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Date) <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(Date, Order) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 147 × 26
    `Song title`         Mashups Mashup Mashup2 Guest City  State Country Stadium
@@ -272,78 +337,45 @@ Note
 #   `Special Annoucement` &lt;chr&gt;, Notes &lt;chr&gt;</code></pre>
 </div>
 </div>
+</section>
+</section>
+<section id="simple-colour-sentiment-dataset" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="simple-colour-sentiment-dataset"><span class="header-section-number">1.3</span> Simple colour sentiment dataset</h2>
+<p>The <a href="https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/album_info_metadata_neutral.xlsx"><code>album_info_metadata_neutral.xlsx</code></a> dataset…</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## map outfits to the corresponding images</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert <span class="sc">%&gt;%</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(DressName) <span class="sc">%&gt;%</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">percentage =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n) <span class="sc">*</span> <span class="dv">100</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">imagePath =</span> <span class="fu">case_when</span>(</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>            DressName <span class="sc">==</span> <span class="st">"Pink"</span> <span class="sc">~</span><span class="fu">paste0</span>(pathToDressColours, <span class="st">"pink.jpg"</span>),</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>            DressName <span class="sc">==</span> <span class="st">"Green"</span> <span class="sc">~</span><span class="fu">paste0</span>(pathToDressColours, <span class="st">"green.jpg"</span>),</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>            DressName <span class="sc">==</span> <span class="st">"Yellow"</span> <span class="sc">~</span><span class="fu">paste0</span>(pathToDressColours, <span class="st">"yellow.jpg"</span>),</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>            DressName <span class="sc">==</span> <span class="st">"Blue"</span> <span class="sc">~</span><span class="fu">paste0</span>(pathToDressColours, <span class="st">"blue.jpg"</span>),</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>            DressName <span class="sc">==</span> <span class="st">"Flamingo pink"</span> <span class="sc">~</span> <span class="fu">paste0</span>(pathToDressColours,<span class="st">"flamingo_pink.jpg"</span>),</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            DressName <span class="sc">==</span> <span class="st">"Ocean blue"</span> <span class="sc">~</span> <span class="fu">paste0</span>(pathToDressColours,<span class="st">"ocean_blue.jpg"</span>),</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>            DressName <span class="sc">==</span> <span class="st">"Sunset orange"</span> <span class="sc">~</span> <span class="fu">paste0</span>(pathToDressColours,<span class="st">"sunset_orange.jpg"</span>),</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            DressName <span class="sc">==</span> <span class="st">"Cotton candy"</span> <span class="sc">~</span><span class="fu">paste0</span>(pathToDressColours, <span class="st">"cotton_candy.jpg"</span>),</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>            DressName <span class="sc">==</span> <span class="st">"Blurple"</span> <span class="sc">~</span><span class="fu">paste0</span>(pathToDressColours, <span class="st">"blurple.jpg"</span>),</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>            DressName <span class="sc">==</span> <span class="st">"Grapefruit"</span> <span class="sc">~</span> <span class="fu">paste0</span>(pathToDressColours,<span class="st">"grapefruit.jpg"</span>),</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>            DressName <span class="sc">==</span> <span class="st">"Popsicle"</span> <span class="sc">~</span> <span class="fu">paste0</span>(pathToDressColours,<span class="st">"popsicle.jpg"</span>),</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        )) <span class="ot">-&gt;</span> outfits</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>outfits</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 11 × 4
-   DressName         n percentage imagePath                                     
-   &lt;chr&gt;         &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;                                         
- 1 Blue              9       6.12 dress_images/images_high_res/cropped/blue.jpg 
- 2 Blurple           7       4.76 dress_images/images_high_res/cropped/blurple.…
- 3 Cotton candy      3       2.04 dress_images/images_high_res/cropped/cotton_c…
- 4 Flamingo pink    15      10.2  dress_images/images_high_res/cropped/flamingo…
- 5 Grapefruit        3       2.04 dress_images/images_high_res/cropped/grapefru…
- 6 Green            20      13.6  dress_images/images_high_res/cropped/green.jpg
- 7 Ocean blue       14       9.52 dress_images/images_high_res/cropped/ocean_bl…
- 8 Pink             29      19.7  dress_images/images_high_res/cropped/pink.jpg 
- 9 Popsicle          4       2.72 dress_images/images_high_res/cropped/popsicle…
-10 Sunset orange    20      13.6  dress_images/images_high_res/cropped/sunset_o…
-11 Yellow           23      15.6  dress_images/images_high_res/cropped/yellow.j…</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> <span class="st">"raw_data/album_info_metadata_neutral.xlsx"</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(allSongsMetadata, <span class="at">sheet =</span> <span class="st">"metadata"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"code/colour_palletts.r"</span>)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>rawColorData <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_MK, <span class="st">";"</span>))),</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">meaning =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_meaningMK, <span class="st">";"</span>)))</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(colour) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(meaning))</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>colorSentimentScores <span class="ot">&lt;-</span> rawColorData <span class="sc">%&gt;%</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">meaning =</span> <span class="fu">trimws</span>(meaning),  </span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">score =</span> <span class="fu">case_when</span>(</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"positive"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"neutral"</span> <span class="sc">~</span> <span class="fl">0.5</span>,</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"negative"</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Calculate average sentiment for each individual color</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>individualColorSentiments <span class="ot">&lt;-</span> colorSentimentScores <span class="sc">%&gt;%</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(colour) <span class="sc">%&gt;%</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">avgSentiment =</span> <span class="fu">mean</span>(score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">mentionCount =</span> <span class="fu">n</span>()</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourGroup <span class="ot">&lt;-</span> colorGroups[individualColorSentiments<span class="sc">$</span>colour]</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourHexColour <span class="ot">&lt;-</span><span class="fu">sapply</span>(individualColorSentiments<span class="sc">$</span>colour, \(x) colorPaletteColours[[x]])</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourGroupColour <span class="ot">&lt;-</span><span class="fu">sapply</span>(individualColorSentiments<span class="sc">$</span>colourGroup, \(x) colorPaletteGroups[[x]])</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>individualColorSentiments</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> <span class="st">"raw_data/album_info_metadata_neutral.xlsx"</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(allSongsMetadata, <span class="at">sheet =</span> <span class="st">"metadata"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"code/colour_palletts.r"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>rawColorData <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_MK, <span class="st">";"</span>))),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">meaning =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_meaningMK, <span class="st">";"</span>)))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(colour) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(meaning))</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>colorSentimentScores <span class="ot">&lt;-</span> rawColorData <span class="sc">%&gt;%</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">meaning =</span> <span class="fu">trimws</span>(meaning),  </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">score =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"positive"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"neutral"</span> <span class="sc">~</span> <span class="fl">0.5</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"negative"</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Calculate average sentiment for each individual color</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>individualColorSentiments <span class="ot">&lt;-</span> colorSentimentScores <span class="sc">%&gt;%</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(colour) <span class="sc">%&gt;%</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">avgSentiment =</span> <span class="fu">mean</span>(score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">mentionCount =</span> <span class="fu">n</span>()</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourGroup <span class="ot">&lt;-</span> colorGroups[individualColorSentiments<span class="sc">$</span>colour]</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourHexColour <span class="ot">&lt;-</span><span class="fu">sapply</span>(individualColorSentiments<span class="sc">$</span>colour, \(x) colorPaletteColours[[x]])</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourGroupColour <span class="ot">&lt;-</span><span class="fu">sapply</span>(individualColorSentiments<span class="sc">$</span>colourGroup, \(x) colorPaletteGroups[[x]])</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>individualColorSentiments</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 69 × 6
    colour                avgSentiment mentionCount colourGroup   colourHexColour
@@ -367,6 +399,7 @@ Note
 </div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -505,12 +538,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./index.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Taylor Swift’s Eras Tour Color-Music Relationships</span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Screaming Colors: A Swiftie Guide to Eras Tour Stats</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./viz.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Visualizing surprise song outfits</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Visualizing the data</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
