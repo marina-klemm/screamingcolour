@@ -33,10 +33,10 @@ Take the lyrics:
 * *I stracth your head, you fall asleep, like a tattoed **golden** retriever*
 
 To us, the examples above show usage of color as a purely discriptive adjective classifying a noun; there is no positive or negative feeling added in the qualifier, which contrasts to these examples:
-* *We're so sad, we paint the town **blue**
-* *The rest of the world was **black and white** but we were in screaming color*
-* *I searched autora borealis green*
-* *It's like your eyes are liquor, it's like your body is **gold**
+* *We're so sad, we paint the town **blue** *(negative)
+* *The rest of the world was **black and white** but we were in screaming color* (negative)
+* *I searched autora borealis green* (positive)
+* *It's like your eyes are liquor, it's like your body is **gold** *(positive)
 
 
 Therefore, the [`album_info_metadata_neutral.xlsx`](https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/album_info_metadata_neutral.xlsx) file is a slight improvement from the original lore with *posivive and/or negative* being replaced by *neutral* where it felt appropriated. 
