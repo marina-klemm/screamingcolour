@@ -1,0 +1,304 @@
+# Visualizing the data
+
+```{r}
+#| echo: FALSE
+#| message: FALSE
+#| warning: FALSE
+load("onload.RData")
+require(tidyverse)
+require(lubridate)
+require(readr)
+require(dplyr)
+```
+
+:::{.callout-note}
+Again, please note that data paths are relative to the root of [the GitHub repository](https://github.com/cmjt/studyinswift)
+:::
+:::{.callout-warning}
+This chapter requires data from @sec-surp to be loaded!
+:::
+
+```{r, message = FALSE, warning = FALSE}
+## extra packages
+require(ggimage)
+require(packcircles)
+require(ggrepel)
+require(cowplot)
+require(ggplot2)
+require(extrafont)
+require(tidyr)
+```
+
+## We Never Go Out of Style: The most worn looks {.unnumbered}
+
+*Looking at it now, it all seems so simple*: the addition of new dresses across the tour legs brought more diversity in the colour spectrum of the surprise songs setlist, although the original colours were still the most predominant among them all. 
+
+Looking at the plot, we can see Pink dominates the spectrum, accounting for nearly 20% of all surprise song performances. Yellow follows at 15.6%, with Green and Sunset Orange tied at 13.6% each. The least common colours—Popsicle, Cotton Candy, and Grapefruit—make rare but memorable appearances at just 2-3% each. 
+
+
+
+```{r}
+#| code-fold: TRUE
+## map hex colour to outfit
+dresscolourMapping <- unique(surpriseSongsDressColours %>% select(DressName, ColourHex1))
+colourPaletteDresses <- setNames(dresscolourMapping$ColourHex1, dresscolourMapping$DressName)
+pathToDressColours <- "dress_images/images_no_background/"
+## map outfits to the corresponding images
+oneRowPerConcert %>%
+    count(DressName) %>%
+    mutate(
+        percentage = n / sum(n) * 100,
+        imagePath = case_when(
+            DressName == "Pink" ~paste0(pathToDressColours, "Pink.png"),
+            DressName == "Green" ~paste0(pathToDressColours, "Green.png"),
+            DressName == "Yellow" ~paste0(pathToDressColours, "Yellow.png"),
+            DressName == "Blue" ~paste0(pathToDressColours, "Blue.png"),
+            DressName == "Flamingo pink" ~ paste0(pathToDressColours,"Flamingo Pink.png"),
+            DressName == "Ocean blue" ~ paste0(pathToDressColours,"Ocean Blue.png"),
+            DressName == "Sunset orange" ~ paste0(pathToDressColours,"Sunset Orange.png"),
+            DressName == "Cotton candy" ~paste0(pathToDressColours, "Cotton Candy.png"),
+            DressName == "Blurple" ~paste0(pathToDressColours, "Blurple.png"),
+            DressName == "Grapefruit" ~ paste0(pathToDressColours,"Grapefruit.png"),
+            DressName == "Popsicle" ~ paste0(pathToDressColours,"Popsicle.png"),
+            TRUE ~ NA_character_
+        )) -> outfits
+
+## barchart
+ggplot(outfits, aes(x = reorder(DressName, -n), y = n, fill = DressName)) +
+    geom_bar(stat = "identity", width = 0.8) +  
+    geom_image(
+        aes(image = imagePath, y = n),  
+        size = 0.15,                    
+        by = "height"                    
+    ) +
+    geom_text(
+        aes(y = n + 3.8, label = paste0(n, "\n(", round(percentage, 1), "%)")),  
+        vjust = 0,  
+        colour = "black",
+        size = 4
+    ) +
+    scale_fill_manual(values = colourPaletteDresses) +
+    theme_minimal() +
+    labs(title = "", x = "", y = "") +
+    theme(
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 14),
+        axis.text.y = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5, size = 16),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.position = "none"
+    ) + ylim(0, 35)
+```
+
+## Eras' Outfits and Special Events {.unnumbered}
+
+Although the first legs (US, Latin America and Asia/Oceania) had only the four original colours to choose from, the European leg and the final, North American legs, had their own set of colours that did not appear anywhere else in the tour. It seemed that Swift had a *love story* with certain shades depending on which continent she was *enchanting*.
+
+
+```{r}
+#| code-fold: TRUE
+#| fig-width: 19
+#| fig-height: 10
+#| warning: FALSE
+# First, find the first date for each dress
+dress_first_appearance <- oneRowPerConcert %>%
+  group_by(DressName) %>%
+  summarize(FirstAppearance = min(Date)) %>%
+  arrange((FirstAppearance))
+
+# Convert DressName to a factor with ordered levels
+oneRowPerConcert$DressName <- factor(oneRowPerConcert$DressName, 
+                                     levels = dress_first_appearance$DressName)
+
+max_dress_level <- length(unique(oneRowPerConcert$DressName))
+
+
+
+# Create the main timeline plot
+main_plot <- ggplot(oneRowPerConcert, aes(x = Date, y = DressName, colour = ColourHex1)) +
+  geom_point(size = 4, alpha = 1) +
+  scale_colour_identity() +
+  theme_minimal() +
+  labs(x = "", y = "") +
+  geom_rect(aes(xmin = as.Date("2023-08-28"), xmax = as.Date("2023-11-08"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, colour = NA) +
+  geom_rect(aes(xmin = as.Date("2023-11-27"), xmax = as.Date("2024-02-06"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, colour = NA) +  
+  geom_rect(aes(xmin = as.Date("2024-03-10"), xmax = as.Date("2024-05-08"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, colour = NA) +
+  geom_rect(aes(xmin = as.Date("2024-08-21"), xmax = as.Date("2024-10-17"),
+                ymin = -Inf, ymax = Inf), fill = "gray", alpha = 0.01, colour = NA) +
+  # Vertical lines for the key events
+  geom_vline(xintercept = as.Date("2024-05-09"), linetype = "dashed", colour = "black") +
+  geom_vline(xintercept = as.Date("2023-03-17"), linetype = "dashed", colour = "black") +
+  geom_vline(xintercept = as.Date("2024-10-18"), linetype = "dashed", colour = "black") +
+  geom_vline(xintercept = as.Date("2023-08-24"), linetype = "dashed", colour = "black") +
+  geom_vline(xintercept = as.Date("2024-02-07"), linetype = "dashed", colour = "black") +
+  geom_vline(xintercept = as.Date("2024-04-16"), linetype = "solid", colour = "darkgray", size=2) +
+  geom_vline(xintercept = as.Date("2023-07-07"), linetype = "solid", colour = "purple", size=2) +
+  geom_vline(xintercept = as.Date("2023-10-27"), linetype = "solid", colour = "blue", size=2) +
+
+  annotate("text", x = as.Date("2024-05-09"), y = max_dress_level, 
+           label = "Europeᵃ", colour = "black", angle = -90, vjust = -0.5, , size = 6, lineheight = 0.6) +
+  annotate("text", x = as.Date("2023-03-17"), y = max_dress_level, 
+           label = "United\nStatesᵃ", colour = "black", angle = -90, vjust = -0.2, , size = 6, lineheight = 0.6) +
+  annotate("text", x = as.Date("2024-10-18"), y = max_dress_level, 
+           label = "North\nAmericaᵃ", colour = "black", angle = -90, vjust = -0.2, , size = 6, lineheight = 0.6) +
+  annotate("text", x = as.Date("2023-08-24"), y = max_dress_level, 
+           label = "Latin\nAmericaᵃ", colour = "black", angle = -90, vjust = -0.2, , size = 6, lineheight = 0.6) +
+  annotate("text", x = as.Date("2024-02-07"), y = max_dress_level, 
+           label = "Asia/\nOceaniaᵃ", colour = "black", angle = -90, vjust = -0.2, , size = 6, lineheight = 0.6) +
+  annotate("text", x = as.Date("2024-04-16"), y = max_dress_level, 
+           label = "TTPDᵇ", colour = "darkgray", angle = -90, vjust = -0.5, , size = 6, lineheight = 0.6,
+           fontface = "bold") +
+  annotate("text", x = as.Date("2023-07-07"), y = max_dress_level, 
+           label = "Speak Now\nTVᵇ", colour = "purple", angle = -90, vjust = -0.2, , size = 6, lineheight = 0.6) +
+  annotate("text", x = as.Date("2023-10-27"), y = max_dress_level, 
+           label = "1989\nTVᵇ", colour = "blue", angle = -90, vjust = -0.2, , size = 6, lineheight = 0.6) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "3 months") +
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 1, size = 16),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    plot.title = element_text(hjust=0.5, size = 14, margin = margin(b = 20), face = "bold"),
+    plot.margin = margin(t = -7, r = 0, b = 10, l = 0),
+    text = element_text(colour = "black", , size = 16)
+  )
+
+source("code/colourPalettes.r")
+# Create dress count plot (to go on the right side)
+# Ensure the dress order matches exactly with the main plot
+dress_levels <- levels(factor(oneRowPerConcert$DressName))
+oneRowPerConcertWithImages$DressName <- factor(oneRowPerConcertWithImages$DressName, levels = dress_levels)
+
+count_plot <- ggplot(oneRowPerConcertWithImages, aes(x = n, y = DressName, fill = DressName)) +
+  geom_bar(stat = "identity", width = 0.8) +
+  geom_image(
+    aes(image = imagePath, x = n),  
+    size = 0.09,                    
+    nudge_x = 0,
+    by = "height"                    
+  ) +
+  geom_text(
+    aes(x = n + 3, label = paste0(n, " (", round(percentage, 1), "%) - ", DressName)),  # Added dress name
+    hjust = 0,
+    nudge_x = 3,
+    colour = "black",
+    size = 6,
+    
+  ) +
+  scale_fill_manual(values = colourPaletteDresses) +
+  theme_minimal() +
+  labs(title = "", x = "", y = "") +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),  # Remove any remaining ticks
+    plot.title = element_text(hjust = 0.5, size = 12),
+    legend.position = "none",
+    plot.margin = margin(t = -7, r = 0, b = 10, l = 0),
+    text = element_text(colour = "black", , size = 16)
+  ) +
+  xlim(0, 65)   # Increased limit to accommodate longer text with dress names
+
+# Merge the plots using cowplot with adjusted widths
+merged_plot <- plot_grid(
+  count_plot, main_plot,
+  ncol = 2,
+  align = "h",
+  axis = "tb",
+  rel_widths = c(2, 3)  # Increased count plot width to accommodate longer text
+)
+
+
+merged_plot
+
+
+```
+
+
+## You Belong With Me: Surprise song colour groups {.unnumbered}
+
+Throughout the Eras Tour, we identified *twenty-two (Ooh)* surprise songs that were always performed with the same colour family. The blue family (including Blue and Ocean Blue) became the emotional home for reflective, vulnerable tracks like *New Year's Day,* *Sweet Nothing,* and *Dear Reader.* 
+
+Meanwhile, the red spectrum (including Pink and Flamingo Pink) claimed passionate, confident anthems like *I Think He Knows,* *Tell Me Why,* and *Dear John.* 
+
+The vibrant yellow family (including Yellow and Sunset Orange) became the consistent backdrop for energetic, resilience-themed tracks like *Slut!* and *I Can Fix Him (No Really I Can)*. 
+
+
+```{r}
+#| code-fold: TRUE
+#| fig-width: 7
+#| fig-height: 7
+surpriseSongsDressColours$groupName <- sapply(surpriseSongsDressColours$DressName, function(colour) {
+  if (colour %in% c("Pink", "Flamingo pink")) return("reds")
+  if (colour %in% c("Green")) return("greens")
+  if(colour %in% c("Yellow", "Sunset orange")) return("yellows")
+  if (colour %in% c("Ocean blue", "Blue")) return ("blues")
+  if (colour %in% c("Popsicle", "Cotton candy", "Grapefruit")) return ("colourful")
+  return("Neutral")
+})
+
+songs_with_single_colour_group <- surpriseSongsDressColours %>%
+  group_by(`Song title`) %>%
+  summarize(
+    total_performances = n(),
+    unique_colour_groups = n_distinct(groupName),
+    colour_group = first(groupName) 
+  ) %>%
+  filter(unique_colour_groups == 1, total_performances > 1) %>%
+  arrange(desc(total_performances))
+
+single_colour_performances <- surpriseSongsDressColours %>%
+    filter(`Song title` %in% songs_with_single_colour_group$`Song title`)
+
+## pics
+blues <- paste("dress_images/images_no_background/", c("Blue", "Ocean Blue"), ".png", sep = "")
+reds <- paste("dress_images/images_no_background/", c("Pink", "Flamingo Pink"), ".png", sep = "")
+yellows <- paste("dress_images/images_no_background/", c("Yellow", "Sunset Orange"), ".png", sep = "")
+
+coords <- circleProgressiveLayout(table(single_colour_performances$groupName),
+                                  sizetype = 'area')
+coords$id <- names(table(single_colour_performances$groupName))
+df.gg <- circleLayoutVertices(coords, npoints = 8, id = 4)
+snames <- single_colour_performances %>% select('Song title', groupName) %>%
+    group_by(`Song title`) %>% mutate(count = n()) %>% ungroup() |> unique()
+set.seed(1984) ## for jitter repel
+plot <- ggplot() + theme_void() +
+    ## blues
+    geom_polygon(data = df.gg[df.gg$id == "blues",], aes(x = x, y = y),
+                 fill = "#0000FF", alpha = 0.05) +
+    geom_text_repel(aes(x = coords$x[1], 
+                        y = coords$y[1], 
+                        label = snames$`Song title`[snames$groupName == "blues"]),
+                    col = "#0000FF", nudge_y = -1.1, nudge_x = 0.1, segment.colour = NA,
+                    size = 1.5*snames$count[snames$groupName == "blues"], box.padding = 0.1) +
+    ## reds
+    geom_polygon(data = df.gg[df.gg$id == "reds",], aes(x = x, y = y),
+                 fill = "#FF0000", alpha = 0.05)  +
+    geom_text_repel(aes(x = coords$x[2], 
+                        y = coords$y[2], 
+                        label = snames$`Song title`[snames$groupName == "reds"]),
+                    col = "#FF0000", nudge_y = -0.9, nudge_x = 0.1, segment.colour = NA,
+                    size = 1.5*snames$count[snames$groupName == "reds"], box.padding = 0.1) +
+    ## yellows
+    geom_polygon(data = df.gg[df.gg$id == "yellows",], aes(x = x, y = y),
+                 fill = "#FFBF00", alpha = 0.05)  +
+    geom_text_repel(aes(x = coords$x[3], 
+                        y = coords$y[3], 
+                        label = snames$`Song title`[snames$groupName == "yellows"]),
+                    col = "#FFBF00", nudge_y = 1.4, nudge_x = 0, segment.colour = NA,
+                    size = 1.5*snames$count[snames$groupName == "yellows"], box.padding = 0.1)
+
+## image sizes relative to
+## table(single_colour_performances$DressName, single_colour_performances$groupName)
+set.seed(1984) ## for jitter repel
+ggdraw() +
+    draw_plot(plot) +
+    draw_image(blues[1], -0.37, 0.23, scale = 0.7/3) +
+    draw_image(blues[2],  -0.2, 0.32, scale = 0.9/3) +
+    #draw_image(blues[3],  -0.07, 0.26, scale = 0.4/3) +
+    draw_image(reds[1], 0.1, 0.27, scale = 0.8/3) +
+    draw_image(reds[2],  0.3, 0.33, scale = 0.7/3) +
+    draw_image(yellows[1], -0.1, -0.25, scale = 0.7/3) +
+    draw_image(yellows[2],  0.1, -0.3, scale = 1.1/3) 
+```
