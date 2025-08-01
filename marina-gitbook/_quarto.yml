@@ -1,0 +1,26 @@
+project:
+  type: book
+  output-dir: docs/
+
+book:
+  title: "Colours of the Taylor Swift Universe"
+  author: "Marina Klemm & Charlotte Jones-Todd"
+  date: ""
+  chapters:
+    - index.qmd
+    - data.qmd
+    - viz.qmd
+    - outfit_transitions.qmd
+    - colour_sentiments.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+
+
+

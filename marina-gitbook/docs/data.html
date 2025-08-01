@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Colours of the Taylor Swift Universe - 1&nbsp; The data!</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./viz.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./data.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The data!</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Colours of the Taylor Swift Universe</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Screaming Colours: A Swiftie Guide to Eras Tour Stats</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The data!</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./viz.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Visualizing the data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./outfit_transitions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Are the surprise song outfits random?</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./colour_sentiments.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Colour Sentiments</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-lore-dataset" id="toc-the-lore-dataset" class="nav-link active" data-scroll-target="#the-lore-dataset"><span class="header-section-number">1.1</span> The Lore dataset</a></li>
+  <li><a href="#sec-surp" id="toc-sec-surp" class="nav-link" data-scroll-target="#sec-surp"><span class="header-section-number">1.2</span> Surprise Songs Data Set</a>
+  <ul class="collapse">
+  <li><a href="#an-overview-of-surprise-song-dresses-across-the-whole-tour" id="toc-an-overview-of-surprise-song-dresses-across-the-whole-tour" class="nav-link" data-scroll-target="#an-overview-of-surprise-song-dresses-across-the-whole-tour"><span class="header-section-number">1.2.1</span> An overview of surprise song dresses across the whole tour</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">The data!</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>All data paths are relative to the root of <a href="https://github.com/cmjt/studyinswift">the GitHub repository</a></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## packages </span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(readxl)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(lubridate)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(forcats)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(tidyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="the-lore-dataset" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="the-lore-dataset"><span class="header-section-number">1.1</span> The Lore dataset</h2>
+<p>The <a href="https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/album_info_metadata.xlsx"><code>album_info_metadata.xlsx</code></a> file includes the fan lore: sentiment, message, keywords, muse, colour meaning, notes, secret messages, colour mentions and their meanings (between positive, negative and neutral). While building the lore dataset, we realized that the mention of colours had more nuanced meaning than just a dicotomial division between “positive” or “negative”.</p>
+<p>Take the lyrics:</p>
+<ul>
+<li><p><em>Drowning in the</em> <strong><em>Blue</em></strong> <em>Nile, he sent me ‘Downtown Lights’</em></p></li>
+<li><p><em>You cinephile in</em> <strong><em>black and white</em></strong>, all those plot twists and dynamite*</p></li>
+<li><p><em>My old</em> <strong><em>blue</em></strong> <em>jeans</em></p></li>
+<li><p><em>I stratch your head, you fall asleep, like a tattoed</em> <strong><em>golden</em></strong> <em>retriever</em></p></li>
+</ul>
+<p>To us, the examples above show usage of colour as a purely discriptive adjective classifying a noun; there is no positive or negative feeling added in the qualifier, which contrasts to these examples:</p>
+<ul>
+<li><p><em>We’re so sad, we paint the town</em> <strong><em>blue</em></strong> (negative)</p></li>
+<li><p><em>The rest of the world was</em> <strong><em>black and white</em></strong> <em>but we were in screaming colour</em> (negative)</p></li>
+<li><p><em>I searched</em> <strong><em>aurora borealis green</em></strong> (positive)</p></li>
+<li><p><em>It’s like your eyes are liquor, it’s like your body is</em> <strong><em>gold</em></strong> (positive)</p></li>
+</ul>
+<p>Therefore, the <a href="https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/album_info_metadata_neutral.xlsx"><code>album_info_metadata_neutral.xlsx</code></a> file is a slight improvement from the original lore with <em>posivive and/or negative</em> being replaced by <em>neutral</em> where it felt appropriated.</p>
+<p>The sentiments were chosen from a list of feelings compiled by the Hoffman Institute Foundation (May/2015 review). Soon it was realized that a single sentiment was not enough to completely differentiate between songs and the message and keywords were also created to add more information to single out a song. For example, while <em>Tim McGraw</em> and <em>Back to December</em> both have the overall <em>nostalgic</em> feeling, the first carries a <em>falling in love</em> message, while the latter is about <em>longing</em>. Likewise, <em>Tim McGraw</em> keywords are <em>romantic, first love, country music</em>, while <em>Back to December</em> keywords are <em>breakup, regretful, heartbreak</em>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"raw_data/album_info_metadata.xlsx"</span>)[,<span class="dv">1</span><span class="sc">:</span><span class="dv">29</span>]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>allSongsMetadata </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 241 × 29
+   album_name     ep    album_release       track_number track_name sentiment_MK
+   &lt;chr&gt;          &lt;lgl&gt; &lt;dttm&gt;                     &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;       
+ 1 evermore       FALSE 2020-12-11 00:00:00           13 marjorie   longing     
+ 2 Midnights      FALSE 2022-10-21 00:00:00            4 Snow On T… peaceful    
+ 3 Midnights      FALSE 2022-10-21 00:00:00           22 Snow On T… peaceful    
+ 4 THE TORTURED … FALSE 2024-04-19 00:00:00           17 The Black… sad         
+ 5 folklore       FALSE 2020-07-24 00:00:00            2 cardigan   melancholic 
+ 6 THE TORTURED … FALSE 2024-04-19 00:00:00           12 loml       sad         
+ 7 Lover          FALSE 2019-08-23 00:00:00           18 Daylight   hopeful     
+ 8 Speak Now (Ta… FALSE 2023-07-07 00:00:00           22 Timeless … nostalgic   
+ 9 1989 (Taylor'… FALSE 2023-10-27 00:00:00            4 Out Of Th… anxious     
+10 reputation     FALSE 2017-11-10 00:00:00            5 Delicate   vulnerable  
+# ℹ 231 more rows
+# ℹ 23 more variables: message_MK &lt;chr&gt;, keywords_MK &lt;chr&gt;, Column1 &lt;dbl&gt;,
+#   muse_MK &lt;chr&gt;, colour_lyric_MK &lt;chr&gt;, colour_meaningMK &lt;chr&gt;,
+#   colour_MK &lt;chr&gt;, notes_MK &lt;chr&gt;, secret_message_MK &lt;chr&gt;, artist &lt;chr&gt;,
+#   featuring &lt;chr&gt;, bonus_track &lt;lgl&gt;, promotional_release &lt;dttm&gt;,
+#   single_release &lt;dttm&gt;, track_release &lt;dttm&gt;, danceability &lt;dbl&gt;,
+#   energy &lt;dbl&gt;, key &lt;dbl&gt;, loudness &lt;dbl&gt;, mode &lt;dbl&gt;, speechiness &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> <span class="st">"raw_data/album_info_metadata.xlsx"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(allSongsMetadata, <span class="at">sheet =</span> <span class="st">"metadata"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#source("code/colourPalettes.r")</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>taylorAlbumSongs<span class="ot">&lt;-</span> <span class="st">"raw_data/taylor_album_songs.xlsx"</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>taylorAlbumSongs<span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"raw_data/taylor_album_songs.xlsx"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours <span class="ot">&lt;-</span> <span class="st">"raw_data/surprise_songs.xlsx"</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"raw_data/surprise_songs.xlsx"</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#Now, I need to select only one row per concert, which I can do by choosing only</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># the first song played in each concert</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert <span class="ot">&lt;-</span> surpriseSongsDressColours <span class="sc">%&gt;%</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Date) <span class="sc">%&gt;%</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Date, Order) <span class="sc">%&gt;%</span>  </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(oneRowPerConcert<span class="sc">$</span>Date)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="do">## Dresses images</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>pathToDresscolours <span class="ot">&lt;-</span> <span class="st">"dress_images/images_no_background"</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>oneRowPerConcertWithImages <span class="ot">&lt;-</span> oneRowPerConcert <span class="sc">%&gt;%</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(DressName) <span class="sc">%&gt;%</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">percentage =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n) <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Automatically build the path based on the dress name</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">imagePath =</span> <span class="fu">file.path</span>(pathToDresscolours, <span class="fu">paste0</span>(DressName, <span class="st">".png"</span>))</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>rawcolourData <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_MK, <span class="st">";"</span>))),</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">meaning =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_meaningMK, <span class="st">";"</span>)))</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(colour) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(meaning))</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>colourSentimentScores <span class="ot">&lt;-</span> rawcolourData <span class="sc">%&gt;%</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>        <span class="at">meaning =</span> <span class="fu">trimws</span>(meaning),  </span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>        <span class="at">score =</span> <span class="fu">case_when</span>(</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"positive"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"neutral"</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"negative"</span> <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sec-surp" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="sec-surp"><span class="header-section-number">1.2</span> Surprise Songs Data Set</h2>
+<p>Parallel to the development of the metadata (aka lore) database, a few details about each surprise song performance were noted down in the <a href="https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/surprise_songs.xlsx"><code>surprise_songs.xlsx</code></a> data set. Each concert had a few rows, one per surprise song (Taylor performed two surprise songs in each of the concerts, the first one on the guitar and the second one on the piano). Besides the two regular surprise songs, she occasionally started mashing up songs in this acoustic set; although the first mashup happened in her second night in Ohio (July 1st, 2023), they became more common from the second night of her Melbourne concert (February 17th, 2024). Thus, three columns account for it: Mashups, with the options none, one or two; <code>Mashup</code>, with the name of the first song mashed up with Song title; and, <code>Mashup2</code>, with yet a third song that was mashed up with Song title and Mashup (in the case of Mashups = Two).</p>
+<p>Besides the song titles and mashups, the surprise songs data set includes the names of the city, state, country, stadium and dates in which she performed. Moreover, the name of the dress she was wearing is included in the column <code>DressName</code>, and its colour in descriptive terms is found on <code>Colour1</code>, its HEX formatting on <code>ColourHex1</code>, and its RGB formatting on <code>ColourRGB1</code>. As some dresses like <em>Flamingo pink</em> and <em>Sunset orange</em> are made up of an ombre of two colours, their name and codes are also found on <code>Colour2</code>, <code>ColourHex2</code> and <code>ColourRGB2</code>. Lastly, other details are also included: who she was dating at the time in the <code>Relationship</code> column; which leg of the tour (First legs, European, Final leg), which night on that city, which instrument she played while singing said song, special guests in the audience, and notes for overall remarks such as: <em>on July 9th, she sang Last Kiss as one the surprise songs, and that date is mentioned on the song</em>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## reading in data</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours <span class="ot">&lt;-</span>  readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"raw_data/surprise_songs.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"List"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(surpriseSongsDressColours<span class="sc">$</span>Date)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 443 × 26
+   `Song title`         Mashups Mashup Mashup2 Guest City  State Country Stadium
+   &lt;chr&gt;                &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  
+ 1 mirrorball           None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Glen… Ariz… US      State …
+ 2 Tim McGraw           None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Glen… Ariz… US      State …
+ 3 State Of Grace       None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Glen… Ariz… US      State …
+ 4 this is me trying    None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Glen… Ariz… US      State …
+ 5 Our Song             None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Las … Neva… US      Allegi…
+ 6 Snow On The Beach    None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Las … Neva… US      Allegi…
+ 7 cowboy like me       None    &lt;NA&gt;   &lt;NA&gt;    Marc… Las … Neva… US      Allegi…
+ 8 White Horse          None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Las … Neva… US      Allegi…
+ 9 Ours                 None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Arli… Texas US      AT&amp;T   
+10 Sad Beautiful Tragic None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Arli… Texas US      AT&amp;T   
+# ℹ 433 more rows
+# ℹ 17 more variables: Date &lt;date&gt;, DressName &lt;chr&gt;, Legs &lt;chr&gt;,
+#   Relationship &lt;chr&gt;, Start &lt;dttm&gt;, End &lt;dttm&gt;, Colour1 &lt;chr&gt;,
+#   ColourHex1 &lt;chr&gt;, ColourRGB1 &lt;chr&gt;, Colour2 &lt;chr&gt;, ColourHex2 &lt;chr&gt;,
+#   ColourRGB2 &lt;chr&gt;, `Night #` &lt;dbl&gt;, Order &lt;dbl&gt;, Instrument &lt;chr&gt;,
+#   `Special Annoucement` &lt;chr&gt;, Notes &lt;chr&gt;</code></pre>
+</div>
+</div>
+<section id="an-overview-of-surprise-song-dresses-across-the-whole-tour" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="an-overview-of-surprise-song-dresses-across-the-whole-tour"><span class="header-section-number">1.2.1</span> An overview of surprise song dresses across the whole tour</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Need only consider first element of each concerts as the</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="do">## same outfit was worn for all surprise songs</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="do">## for anyone concert</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert <span class="ot">&lt;-</span> surpriseSongsDressColours <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Date) <span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(Date, Order) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 147 × 26
+   `Song title`         Mashups Mashup Mashup2 Guest City  State Country Stadium
+   &lt;chr&gt;                &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  
+ 1 mirrorball           None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Glen… Ariz… US      State …
+ 2 this is me trying    None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Glen… Ariz… US      State …
+ 3 Our Song             None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Las … Neva… US      Allegi…
+ 4 cowboy like me       None    &lt;NA&gt;   &lt;NA&gt;    Marc… Las … Neva… US      Allegi…
+ 5 Sad Beautiful Tragic None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Arli… Texas US      AT&amp;T   
+ 6 Death By A Thousand… None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Arli… Texas US      AT&amp;T   
+ 7 Speak Now            None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Tampa Flor… US      Raymon…
+ 8 The Great War        None    &lt;NA&gt;   &lt;NA&gt;    Aaro… Tampa Flor… US      Raymon…
+ 9 mad woman            None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Tampa Flor… US      Raymon…
+10 Wonderland           None    &lt;NA&gt;   &lt;NA&gt;    &lt;NA&gt;  Hous… Texas US      NRG    
+# ℹ 137 more rows
+# ℹ 17 more variables: Date &lt;date&gt;, DressName &lt;chr&gt;, Legs &lt;chr&gt;,
+#   Relationship &lt;chr&gt;, Start &lt;dttm&gt;, End &lt;dttm&gt;, Colour1 &lt;chr&gt;,
+#   ColourHex1 &lt;chr&gt;, ColourRGB1 &lt;chr&gt;, Colour2 &lt;chr&gt;, ColourHex2 &lt;chr&gt;,
+#   ColourRGB2 &lt;chr&gt;, `Night #` &lt;dbl&gt;, Order &lt;dbl&gt;, Instrument &lt;chr&gt;,
+#   `Special Annoucement` &lt;chr&gt;, Notes &lt;chr&gt;</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Screaming Colours: A Swiftie Guide to Eras Tour Stats</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./viz.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Visualizing the data</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

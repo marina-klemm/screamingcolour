@@ -1,0 +1,158 @@
+# The data!
+
+:::{.callout-note}
+All data paths are relative to the root of [the GitHub repository](https://github.com/cmjt/studyinswift)
+:::
+
+```{r, message = FALSE, warning=FALSE}
+## packages 
+require(tidyverse)
+require(readxl)
+require(lubridate)
+require(forcats)
+require(tidyr)
+
+```
+
+
+## The Lore dataset
+
+The [`album_info_metadata.xlsx`](https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/album_info_metadata.xlsx)  file includes the fan lore: sentiment, message, keywords, muse, colour meaning, notes, secret messages, colour mentions and their meanings (between positive, negative and neutral). 
+While building the lore dataset, we realized that the mention of colours had more nuanced meaning than just a dicotomial division between "positive" or "negative".
+
+Take the lyrics:
+
+* *Drowning in the* ***Blue*** *Nile, he sent me 'Downtown Lights'*
+
+* *You cinephile in* ***black and white***, all those plot twists and dynamite*
+
+* *My old* ***blue*** *jeans*
+
+* *I stratch your head, you fall asleep, like a tattoed* ***golden*** *retriever*
+
+To us, the examples above show usage of colour as a purely discriptive adjective classifying a noun; there is no positive or negative feeling added in the qualifier, which contrasts to these examples:
+
+* *We're so sad, we paint the town* ***blue*** (negative)
+
+* *The rest of the world was* ***black and white*** *but we were in screaming colour* (negative)
+
+* *I searched* ***aurora borealis green*** (positive)
+
+* *It's like your eyes are liquor, it's like your body is* ***gold*** (positive)
+
+
+Therefore, the [`album_info_metadata_neutral.xlsx`](https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/album_info_metadata_neutral.xlsx) file is a slight improvement from the original lore with *posivive and/or negative* being replaced by *neutral* where it felt appropriated. 
+
+The sentiments were chosen from a list of feelings compiled by the Hoffman Institute Foundation (May/2015 review). Soon it was realized that a single sentiment was not enough to completely differentiate between songs and the message and keywords were also created to add more information to single out a song. For example, while *Tim McGraw* and *Back to December* both have the overall *nostalgic* feeling, the first carries a *falling in love* message, while the latter is about *longing*. Likewise, *Tim McGraw* keywords are *romantic, first love, country music*, while *Back to December* keywords are *breakup, regretful, heartbreak*. 
+
+
+
+
+```{r}
+allSongsMetadata <- readxl::read_excel("raw_data/album_info_metadata.xlsx")[,1:29]
+allSongsMetadata 
+```
+
+
+
+
+
+```{r}
+#| warning: FALSE
+allSongsMetadata <- "raw_data/album_info_metadata.xlsx"
+allSongsMetadata <- readxl::read_excel(allSongsMetadata, sheet = "metadata")
+
+#source("code/colourPalettes.r")
+
+taylorAlbumSongs<- "raw_data/taylor_album_songs.xlsx"
+taylorAlbumSongs<- readxl::read_excel("raw_data/taylor_album_songs.xlsx")
+
+surpriseSongsDressColours <- "raw_data/surprise_songs.xlsx"
+surpriseSongsDressColours <- readxl::read_excel("raw_data/surprise_songs.xlsx")
+
+#Now, I need to select only one row per concert, which I can do by choosing only
+# the first song played in each concert
+oneRowPerConcert <- surpriseSongsDressColours %>%
+  group_by(Date) %>%
+  arrange(Date, Order) %>%  
+  slice(1) %>%
+  ungroup()
+
+oneRowPerConcert$Date <- as.Date(oneRowPerConcert$Date)
+
+
+## Dresses images
+
+pathToDresscolours <- "dress_images/images_no_background"
+
+oneRowPerConcertWithImages <- oneRowPerConcert %>%
+  count(DressName) %>%
+  mutate(
+    percentage = n / sum(n) * 100,
+    # Automatically build the path based on the dress name
+    imagePath = file.path(pathToDresscolours, paste0(DressName, ".png"))
+  )
+
+
+rawcolourData <- data.frame(
+    colour = trimws(unlist(strsplit(allSongsMetadata$colour_MK, ";"))),
+    meaning = trimws(unlist(strsplit(allSongsMetadata$colour_meaningMK, ";")))
+) %>% filter(!is.na(colour) & !is.na(meaning))
+
+colourSentimentScores <- rawcolourData %>%
+    mutate(
+        meaning = trimws(meaning),  
+        score = case_when(
+            tolower(meaning) == "positive" ~ 1,
+            tolower(meaning) == "neutral" ~ 0,
+            tolower(meaning) == "negative" ~ -1,
+            TRUE ~ NA_real_
+        )
+    )
+
+```
+
+
+
+
+## Surprise Songs Data Set {#sec-surp}
+
+Parallel to the development of the metadata (aka lore) database, a few details about each surprise song performance were noted down in the [`surprise_songs.xlsx`](https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/surprise_songs.xlsx) data set. Each concert had a few rows, one per surprise song (Taylor performed two surprise songs in each of the concerts, the first one on the guitar and the second one on the piano). Besides the two regular surprise songs, she occasionally started mashing up songs in this acoustic set; although the first mashup happened in her second night in Ohio (July 1st, 2023), they became more common from the second night of her Melbourne concert (February 17th, 2024). Thus, three columns account for it: Mashups, with the options none, one or two; `Mashup`, with the name of the first song mashed up with Song title; and, `Mashup2`, with yet a third song that was mashed up with Song title and Mashup (in the case of Mashups = Two). 
+
+Besides the song titles and mashups, the surprise songs data set includes the names of the city, state, country, stadium and dates in which she performed. Moreover, the name of the dress she was wearing is included in the column `DressName`, and its colour in descriptive terms is found on `Colour1`, its HEX formatting on `ColourHex1`, and its RGB formatting on `ColourRGB1`. As some dresses like *Flamingo pink* and *Sunset orange* are made up of an ombre of two colours, their name and codes are also found on `Colour2`, `ColourHex2` and `ColourRGB2`. Lastly, other details are also included: who she was dating at the time in the `Relationship` column; which leg of the tour (First legs, European, Final leg), which night on that city, which instrument she played while singing said song, special guests in the audience, and notes for overall remarks such as: *on July 9th, she sang Last Kiss as one the surprise songs, and that date is mentioned on the song*.   
+
+
+```{r, message = FALSE}
+## reading in data
+surpriseSongsDressColours <-  readxl::read_excel("raw_data/surprise_songs.xlsx", sheet = "List")
+surpriseSongsDressColours$Date <- as.Date(surpriseSongsDressColours$Date)
+surpriseSongsDressColours
+```
+
+### An overview of surprise song dresses across the whole tour 
+
+
+
+```{r, message = FALSE}
+## Need only consider first element of each concerts as the
+## same outfit was worn for all surprise songs
+## for anyone concert
+oneRowPerConcert <- surpriseSongsDressColours %>%
+    group_by(Date) %>%
+    arrange(Date, Order) %>% 
+    slice(1) %>%
+    ungroup()
+oneRowPerConcert
+```
+
+
+
+
+```{r}
+#| eval: FALSE
+#| echo: FALSE
+save.image(file = "onload.RData")
+# convert .RData -> .rdb/.rdx
+e <- local({load("onload.RData"); environment()})
+tools:::makeLazyLoadDB(e, "onload")
+```
