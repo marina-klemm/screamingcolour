@@ -49,12 +49,51 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Eras' Outfits and Special Events
 
-![](https://github.com/cmjt/studyinswift/blob/cmjt/plots/outfits-events.png?raw=true)
+![](https://github.com/cmjt/studyinswift/blob/cmjt/plots/outfits-events.jpeg?raw=true)
 
 ### Taylor's Dictionary of Colour
 
-![](https://github.com/cmjt/studyinswift/blob/cmjt/plots/colour_dictionary.png?raw=true)
+![](https://github.com/cmjt/studyinswift/blob/cmjt/plots/coa_dictionary.jpeg?raw=true)
 
 ### Surprise Song Colour Groups
 
-![](https://github.com/cmjt/studyinswift/blob/cmjt/plots/surprise_colour_groups.png?raw=true)
+![](https://github.com/cmjt/studyinswift/blob/cmjt/plots/surprise_colour_groups.jpeg?raw=true)
+
+### Easter Eggs in [We Were Screaming Colour: Colours of the Taylor Swift Universe]()
+
+The table below lists the lyrics/songs references in the article in order of appearance.
+
+| Reference                                                                 | Song                              | Album                        |
+|---------------------------------------------------------------------------|-----------------------------------|------------------------------|
+| We Were Screaming Colour                                                  | Out of the Woods                  | 1989                         |
+| And they’ll tell you now, you’re the lucky one                            | The Lucky One                     | Red                          |
+| I Can Do It With a Broken Heart                                           | I Can Do It With a Broken Heart   | The Tortured Poets Department|
+| it was rare, I was there                                                  | All Too Well                      | Red                          |
+| That’s the moment they knew                                               | The Moment I Knew                 | Red                          |
+| We never go out of style                                                  | Style                             | 1989                         |
+| Look What You Made Me Do                                                  | Look What You Made Me Do          | Reputation                   |
+| reputation                                                                | End Game                          | Reputation                   |
+| were there clues we didn’t see?                                           | invisible string                  | Folklore                     |
+| devils rolling the dice                                                   | Cruel Summer                      | Lover                        |
+| invisible string                                                          | invisible string                  | Lover                        |
+| scheme like a criminal                                                    | Mastermind                        | Midnights                    |
+| Florida!!!                                                                | Florida!!!                        | The Tortured Poets Department|
+| Long story short                                                          | long story short                  | evermore                     |
+| she laid the groundwork and then, just like clockwork the dominoes…       | Mastermind                        | Midnights                    |
+| What if I told you she’s a Mastermind                                     | Mastermind                        | Midnights                    |
+| we're so sad, you paint the town blue                                     | Miss Americana & The Heartbreak…  | Lover                        |
+| drowning in the Blue Nile, he sent me 'Downtown Lights'                   | Guilty as Sin?                     | The Tortured Poets Department|
+| clear blue water, high tide came and brought you in                       | This Love                         | 1989                         |
+| This Is Me Trying                                                         | this is me trying                 | Folklore                     |
+| swirling it into all of her poems                                         | Fresh Out The Slammer             | The Tortured Poets Department|
+| You Belong With Me                                                        | You Belong With Me                | Fearless                     |
+| this question mark written on the back of our hands                       | I Heart ?                         | Blue Eyes                    |
+| Would’ve Could’ve Should’ve                                               | Would’ve Could’ve Should’ve       | Midnights                    |
+| I think there’s been a glitch                                             | Glitch                            | Midnights                    |
+| I Think She Knows                                                         | I Think He Knows                  | Lover                        |
+| but now my eyes leak acid rain on the pillow where you used to lay your…  | Happiness                         | evermore                     |
+| How did it end?                                                           | How Did It End?                   | The Tortured Poets Department|
+| ready for it                                                              | ...Ready for It?                  | Reputation                   |
+| mad woman                                                                 | mad woman                         | Folklore                     |
+| Is it over now?                                                           | Is It Over Now?                   | 1989                         |
+
