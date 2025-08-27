@@ -1,12 +1,15 @@
-## Data overview
+## File overview
 
+    tree -I "README.*"
     .
     ├── album_info_metadata_neutral.xlsx
     ├── album_info_metadata.xlsx
-    ├── README.md
-    └── surprise_songs.xlsx
+    ├── sentimentGroups.xlsx
+    ├── surpriseSongsDressColoursMashupsLong.xlsx
+    ├── surprise_songs.xlsx
+    └── taylorAlbumSongs.xlsx
 
-    0 directories, 4 files
+    0 directories, 6 files
 
     library(readxl)
     files <- list.files(pattern = ".xlsx")
@@ -58,6 +61,21 @@
     ## #   key_name <chr>, mode_name <chr>, key_mode <chr>, lyrics <chr>, …
     ## 
     ## [[3]]
+    ## # A tibble: 10 × 11
+    ##    Mad       Glad     Down  Uplifting Moved Tender ...7  ...8  ...9  ...10 ...11
+    ##    <chr>     <chr>    <chr> <chr>     <chr> <chr>  <lgl> <lgl> <lgl> <lgl> <lgl>
+    ##  1 angry     happy    regr… encourag… temp… heart… NA    NA    NA    NA    NA   
+    ##  2 resentful playful  hope… empoweri… refl… loves… NA    NA    NA    NA    NA   
+    ##  3 vengeful  joyful   vuln… free      conf… griev… NA    NA    NA    NA    NA   
+    ##  4 defiant   grateful conc… optimist… plea… longi… NA    NA    NA    NA    NA   
+    ##  5 <NA>      admired  anxi… empathet… acce… lonely NA    NA    NA    NA    NA   
+    ##  6 <NA>      excited  nost… hopeful   remi… <NA>   NA    NA    NA    NA    NA   
+    ##  7 <NA>      peaceful mela… compassi… <NA>  <NA>   NA    NA    NA    NA    NA   
+    ##  8 <NA>      warm     frus… brave     <NA>  <NA>   NA    NA    NA    NA    NA   
+    ##  9 <NA>      <NA>     sad   resolute  <NA>  <NA>   NA    NA    NA    NA    NA   
+    ## 10 <NA>      <NA>     desp… passiona… <NA>  <NA>   NA    NA    NA    NA    NA   
+    ## 
+    ## [[4]]
     ## # A tibble: 443 × 26
     ##    `Song title`         Mashups Mashup Mashup2 Guest City  State Country Stadium
     ##    <chr>                <chr>   <chr>  <chr>   <chr> <chr> <chr> <chr>   <chr>  
@@ -77,3 +95,46 @@
     ## #   ColourHex1 <chr>, ColourRGB1 <chr>, Colour2 <chr>, ColourHex2 <chr>,
     ## #   ColourRGB2 <chr>, `Night #` <dbl>, Order <dbl>, Instrument <chr>,
     ## #   `Special Annoucement` <chr>, Notes <chr>
+    ## 
+    ## [[5]]
+    ## # A tibble: 443 × 26
+    ##    `Song title`         Mashups Mashup Mashup2 Guest City  State Country Stadium
+    ##    <chr>                <chr>   <chr>  <chr>   <chr> <chr> <chr> <chr>   <chr>  
+    ##  1 mirrorball           None    <NA>   <NA>    <NA>  Glen… Ariz… US      State …
+    ##  2 Tim McGraw           None    <NA>   <NA>    <NA>  Glen… Ariz… US      State …
+    ##  3 State Of Grace       None    <NA>   <NA>    <NA>  Glen… Ariz… US      State …
+    ##  4 this is me trying    None    <NA>   <NA>    <NA>  Glen… Ariz… US      State …
+    ##  5 Our Song             None    <NA>   <NA>    <NA>  Las … Neva… US      Allegi…
+    ##  6 Snow On The Beach    None    <NA>   <NA>    <NA>  Las … Neva… US      Allegi…
+    ##  7 cowboy like me       None    <NA>   <NA>    Marc… Las … Neva… US      Allegi…
+    ##  8 White Horse          None    <NA>   <NA>    <NA>  Las … Neva… US      Allegi…
+    ##  9 Ours                 None    <NA>   <NA>    <NA>  Arli… Texas US      AT&T   
+    ## 10 Sad Beautiful Tragic None    <NA>   <NA>    <NA>  Arli… Texas US      AT&T   
+    ## # ℹ 433 more rows
+    ## # ℹ 17 more variables: Date <dttm>, DressName <chr>, Legs <chr>,
+    ## #   Relationship <chr>, Start <dttm>, End <dttm>, Colour1 <chr>,
+    ## #   ColourHex1 <chr>, ColourRGB1 <chr>, Colour2 <chr>, ColourHex2 <chr>,
+    ## #   ColourRGB2 <chr>, `Night #` <dbl>, Order <dbl>, Instrument <chr>,
+    ## #   `Special Annoucement` <chr>, Notes <chr>
+    ## 
+    ## [[6]]
+    ## # A tibble: 240 × 105
+    ##    album_name ep    album_release       track_number track_name artist featuring
+    ##    <chr>      <lgl> <dttm>                     <dbl> <chr>      <chr>  <chr>    
+    ##  1 Red        FALSE 2021-11-12 00:00:00            6 "22"       Taylo… <NA>     
+    ##  2 1989       FALSE 2023-10-27 00:00:00           17 "\"Slut!\… Taylo… <NA>     
+    ##  3 reputation FALSE 2017-11-10 00:00:00            1 "...Ready… Taylo… <NA>     
+    ##  4 Taylor Sw… FALSE 2006-10-24 00:00:00           14 "A Perfec… Taylo… <NA>     
+    ##  5 Taylor Sw… FALSE 2006-10-24 00:00:00            4 "A Place … Taylo… <NA>     
+    ##  6 Lover      FALSE 2019-08-23 00:00:00           15 "Afterglo… Taylo… <NA>     
+    ##  7 Red        FALSE 2021-11-12 00:00:00            5 "All Too … Taylo… <NA>     
+    ##  8 Red        FALSE 2021-11-12 00:00:00           30 "All Too … Taylo… <NA>     
+    ##  9 1989       FALSE 2023-10-27 00:00:00            5 "All You … Taylo… <NA>     
+    ## 10 Midnights  FALSE 2022-10-21 00:00:00            3 "Anti-Her… Taylo… <NA>     
+    ## # ℹ 230 more rows
+    ## # ℹ 98 more variables: bonus_track <lgl>, promotional_release <dttm>,
+    ## #   single_release <dttm>, track_release <dttm>, danceability <dbl>,
+    ## #   energy <dbl>, key <dbl>, loudness <dbl>, mode <dbl>, speechiness <dbl>,
+    ## #   acousticness <dbl>, instrumentalness <dbl>, liveness <dbl>, valence <dbl>,
+    ## #   tempo <dbl>, time_signature <dbl>, duration_ms <dbl>, explicit <lgl>,
+    ## #   key_name <chr>, mode_name <chr>, key_mode <chr>, lyrics <chr>, …
