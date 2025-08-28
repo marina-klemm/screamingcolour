@@ -7,16 +7,19 @@ output: md_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Data overview
+## File overview
 
 ```bash
+tree -I "README.*"
 .
 ├── album_info_metadata_neutral.xlsx
 ├── album_info_metadata.xlsx
-├── README.md
-└── surprise_songs.xlsx
+├── sentimentGroups.xlsx
+├── surpriseSongsDressColoursMashupsLong.xlsx
+├── surprise_songs.xlsx
+└── taylorAlbumSongs.xlsx
 
-0 directories, 4 files
+0 directories, 6 files
 ```
 
 

@@ -1,0 +1,23 @@
+# Screaming Colors: A Swiftie Guide to Eras Tour Stats {.unnumbered}
+
+*A short collection of visualization and `R`stats exercises exploring Taylor Swift's use of colour in her Eras tour outfits and her lyrics!*
+
+This whole analysis started with a Swiftie curiosity over the selection of surprise songs' dresses colors and if they reflected the mood being sang in said songs. This then raised the question of which possible meaning that colors might have in the Swiftverse. Where do we even start analyzing that?
+
+What followed was months of metadata being added to songs; identifying every single time Swift mentions color and what they mean (it turns out, 45% of her songs mention color!);  decision over which package to use to tokenize song's moods and rate them on a scale of most negative to most positive; which led to another question: would lore collected by a long-time fan be more meaningful to identify the song's meaning over an automated dictionary-based approach? 
+
+One might say this Swiftie fell in a rabbit hole, or is walking down Clown-elia Street again, but with Eras Tour ending and no signal of Debut (TV) or Reputation (TV) being released, there was some considerable amount of time that could be dedicated to this silly and fun passion project. 🤓
+
+
+Rather than `R`stats if you'd simply like to make a Taylor Swift playlist based on sentiment, colours and/or muses then have a play with our [Screaming Colour Taylor Swift Playlist Generator](https://marinaklemm.shinyapps.io/screamingcolor/)!
+
+<iframe src="https://marinaklemm.shinyapps.io/screamingcolor/" height="500" width="900" title="Screaming Colour Taylor Swift Playlist Generator"></iframe>
+
+#### Some [r/TaylorSwift](https://www.reddit.com/r/TaylorSwift) reading if you're keen {.unnumbered}
+
+ 1. [Repetition in Taylor Swift Discography](https://www.reddit.com/r/TaylorSwift/comments/17linx2/taylor_swift_songs_ordered_by_how_many_times_the/)
+
+ 2. [Snakegate timeline](https://www.cosmopolitan.com/uk/entertainment/news/a41965/taylor-swift-kanye-west-feud-timeline/)
+
+ 3. [What would Taylor discography be like if snakegate didn't happen?](https://www.reddit.com/r/TaylorSwift/comments/192w7pv/what_would_taylors_6th_album_be_if_it_wasnt_for/)
+

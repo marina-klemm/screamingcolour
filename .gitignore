@@ -1,3 +1,7 @@
 *.docx
 *.pdf
 *.*~
+/.quarto/
+code/wordcloud.R
+onload.rdb
+onload.rdx

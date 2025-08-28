@@ -1,0 +1,437 @@
+# Are the surprise song outfits random?
+
+```{r}
+#| echo: FALSE
+#| message: FALSE
+load("onload.RData")
+require(tidyverse)
+```
+
+
+In this section we're going to look at the order of surprise song outfits. First let's just select the data we need.
+
+```{r}
+data <- data.frame(Outfit = oneRowPerConcert$DressName,
+                   Leg = ifelse(oneRowPerConcert$Legs %in% c("First leg", "Latin America", "Asia-Oceania"),
+                                "First",
+                         ifelse(oneRowPerConcert$Legs == "European leg", "Europe", "Final")))
+
+data |> head()
+```
+
+Now, let's look at the outfit transitions by creating a transition matrix using a simple function `transition_matrix`, which takes a sequence of categorical events and returns a table of the number of observed transitions between each event (in our case named outfits).
+
+```{r}
+transitions <- function(x) {
+  n <- length(x)
+  table(x[-n], x[-1])
+}
+```
+
+Looking at the outfit transitions.
+
+```{r, results='asis'}
+data$Outfit |> transitions() |> knitr::kable(caption = "Outfit transitions of Swift's Eras tour")
+
+```
+
+This is quite a sparse table (*we know some outfits  didn't appear until later legs of the tour*). So, let's consider the transitions for each of the three main legs.
+
+```{r, results='asis'}
+## first leg
+first_leg <- data[data$Leg == "First", "Outfit"]
+first_leg |> transitions() |> knitr::kable(caption = "Outfit transitions for the first leg of Swift's Eras tour")
+## europe leg
+mid_leg <- data[data$Leg == "Europe", "Outfit"]
+mid_leg |> transitions() |> knitr::kable(caption = "Outfit transitions for the European leg of Swift's Eras tour")
+## final leg
+final_leg <- data[data$Leg == "Final", "Outfit"]
+final_leg |> transitions() |> knitr::kable(caption = "Outfit transitions for the final leg of Swift's Eras tour")
+
+```
+
+
+## A $\chi^2$-test for the transition counts
+
+Likely, the first standard hypothesis test you think of for count/contingency data is the $\chi^2$-test (or the chi-squared test). Essentially, this works by *testing* for equal transition rates (if the outfit choices were completely random we'd expect equal numbers of transitions between the outfits); Slightly more formally,
+
+$H_0 = \text{row outfits independent of column outfits}$ vs. $H_1 = \text{row outfits not independent of column outfits}$.
+
+```{r, warning = FALSE}
+## first leg
+first_leg |> transitions() |> chisq.test()
+## europe leg
+mid_leg |> transitions() |> chisq.test()
+## final leg
+final_leg |> transitions() |> chisq.test()
+```
+
+
+```{r, echo = FALSE, warning = FALSE, results='asis'}
+#| label: tbl-chisq
+#| tbl-cap: "Summary of the chi-squared tests on the transition matricies for each leg of the Eras tour."
+chis <- list(3)
+first_leg |> transitions() |> chisq.test() -> chis[[1]]
+mid_leg |> transitions() |> chisq.test() -> chis[[2]]
+final_leg |> transitions() |> chisq.test() -> chis[[3]]
+res <- data.frame(statistic = sapply(chis, function(x) x$statistic),
+                  df = sapply(chis, function(x) x$parameter),
+                  p.value = sapply(chis, function(x) x$p.value))
+rownames(res) <- c("First Leg", "European Leg", "Final Leg")
+colnames(res) <- c("Chi-squared statistic", "Degrees of freedom", "p-vlaue")
+knitr::kable(res, digits = 3)
+```
+
+Therefore, if our $\chi^2$ assumptions were met we might infer that there's some evidence against the outfits for the European leg being random.
+
+```{r, echo = FALSE, fig.cap="Chi-squared distribution under the NULL hypothesis for each leg along with the observed chi-squared statistic in purple."}
+
+x <- seq(0,40, length.out = 100)
+chisq_data <- data.frame(x = rep(x, time = 3),
+                         leg = rep(c("First Leg", "European Leg", "Final Leg"), each = 100),
+                         stat = rep(res[,1], each = 100))
+chisq_data$density <- c(dchisq(x, df = res[1,2]), dchisq(x, df = res[2,2]), dchisq(x, df = res[3,2]))
+chisq_data |>
+  mutate(across(leg, ~factor(., levels = c("First Leg", "European Leg", "Final Leg")))) |>
+  ggplot(aes(x = x, y = density)) +
+  geom_line(linewidth = 2) +
+  geom_vline(aes(xintercept = stat), linetype = "dashed", color = "purple") +
+  facet_wrap(~ leg, nrow = 1) +
+  labs(title = "",x = "", y = "") + theme_bw()
+
+```
+
+
+## A randomisation test 
+
+If we're not happy that our parametric assumptions are met then we can (*often*) fall back on simple resampling methods; basically simulating what would happen under chance alone and then comparing how our observed situation stack up!
+
+To begin with let's use the $\chi^2$-squared statistic to *represent* the transition matrix we observed for each leg (it is a valid metric comparing between what we expected under independence and what we observed). By using a randomisation test we can build up a sampling distribution of this chosen metric that represent what would happen under chance alone (i.e., without any assumptions about the shape of this distribution). Our observed statistics in this case are given in the first column of @tbl-chisq.
+
+```{r}
+## create a function for the randomisation test using chi-sq
+## on the transition matrix, using a for loop just bc
+
+randomisation <- function(data, nreps = 1000, seed = 1984){
+  sampling_dist <- numeric(nreps)
+  set.seed(seed) 
+  for (i in 1:nreps) {
+   sampling_dist[i] <- suppressWarnings(sample(data) |> 
+                                          transitions() |> 
+                                          chisq.test())$statistic
+  }
+return(sampling_dist)
+}
+```
+
+Calculating a p-value (*note they're all pretty much the same as above!*).
+
+```{r, warning = FALSE}
+## first leg
+null_first <- randomisation(first_leg)
+mean(null_first >= (first_leg |> transitions() |> chisq.test())$statistic)
+## European leg
+null_mid <- randomisation(mid_leg)
+mean(null_mid >= (mid_leg |> transitions() |> chisq.test())$statistic)
+## Final leg
+null_final <- randomisation(final_leg)
+mean(null_final >= (final_leg |> transitions() |> chisq.test())$statistic)
+```
+
+
+```{r, echo = FALSE, fig.cap="Sampling distribution of the test statistic (the chi-squared statistic) under the NULL hypothesis for each leg along with the observed test statistic in purple.", warning=FALSE, message=FALSE}
+
+rand_data <- data.frame(x = c(null_first, null_mid, null_final),
+                         leg = rep(c("First Leg", "European Leg", "Final Leg"), each = 1000),
+                         stat = rep(res[,1], each = 1000))
+rand_data |>
+  mutate(across(leg, ~factor(., levels = c("First Leg", "European Leg", "Final Leg")))) |>
+  ggplot(aes(x = x)) +
+  geom_histogram() +
+  geom_vline(aes(xintercept = stat), linetype = "dashed", color = "purple") +
+  facet_wrap(~ leg, nrow = 1) +
+  labs(title = "",x = "", y = "") + theme_bw()
+
+```
+
+But, we can actually use any metric we like in a randomisation test! For our example, the $\chi^2$ is a nice (*distance*) statistic because it considers all the transitions, but if we were particularly interested in, say, a particular transition (e.g., Yellow $\rightarrow$ Pink for the first leg) we could look at those instead. 
+
+$H_0 = \text{A particular transition occured at random}$ 
+
+vs. 
+
+$H_1 = \text{A particular transition occured fewer or more times than expected}$.
+
+[Note: than expected means than was expected under chance alone.]
+
+
+```{r}
+## create a new function for the randomisation test using the 
+## numbers of a particular transition (from --> to)
+
+randomisation <- function(data, from = "Yellow", to = "Pink", 
+                          nreps = 1000, seed = 1984){
+  sampling_dist <- numeric(nreps)
+  set.seed(seed) 
+  for (i in 1:nreps) {
+   sampling_dist[i] <- (sample(data) |> transitions())[from, to]
+  }
+return(sampling_dist)
+}
+
+```
+
+Calculating a *two-sided* p-value.
+
+```{r, warning = FALSE}
+## first leg, Yellow --> Pink (default)
+null_first <- randomisation(first_leg)
+obs_first <- (first_leg |> transitions())["Yellow", "Pink"]
+mean(abs(null_first - mean(null_first)) >= abs(obs_first - mean(null_first)))
+## European leg, Sunset orange --> Flamingo pink
+null_mid <- randomisation(mid_leg, from = "Sunset orange", to = "Flamingo pink")
+obs_mid <- (mid_leg |> transitions())["Sunset orange", "Flamingo pink"]
+mean(abs(null_mid - mean(null_mid)) >= abs(obs_mid - mean(null_mid)))
+## Final leg, Blurple --> Blurple
+null_final <- randomisation(final_leg, from = "Blurple", to = "Blurple")
+obs_final <- (final_leg |> transitions())["Blurple", "Blurple"]
+mean(abs(null_final - mean(null_final)) >= abs(obs_final - mean(null_final)))
+```
+
+
+```{r, echo = FALSE, fig.cap="Sampling distribution of the test statistic (the number of times a particular transition occured) under the NULL hypothesis for each leg along with the observed test statistic in purple.", warning=FALSE, message=FALSE}
+con <- c((first_leg |> transitions())["Yellow", "Pink"],
+         (mid_leg |> transitions())["Sunset orange", "Flamingo pink"],
+         (final_leg |> transitions())["Blurple", "Blurple"])
+
+rand_data <- data.frame(x = c(null_first, null_mid, null_final),
+                         leg = rep(c("First Leg", "European Leg", "Final Leg"), each = 1000),
+                         stat = rep(con, each = 1000))
+rand_data |>
+  mutate(across(leg, ~factor(., levels = c("First Leg", "European Leg", "Final Leg")))) |>
+  ggplot(aes(x = x)) +
+  geom_histogram() +
+  geom_vline(aes(xintercept = stat), linetype = "dashed", color = "purple") +
+  facet_wrap(~ leg, nrow = 1, scales = "free_x", labeller = labeller(leg = 
+    c("First Leg" = "First Leg: \nYellow --> Pink",
+      "European Leg" = "European Leg: \nSunset orange --> Flamingo pink",
+      "Final Leg" = "Final Leg: \nBlurple --> Blurple"))) +
+  labs(title = "",x = "", y = "") + theme_bw()
+
+```
+In each case, no evidence to suggest we see the particular transitions more or less frequently than would be expected under the NULL hypothesis of chance alone. (*Note the transitions were chosen arbitrarily*)
+
+## A likelihood ratio test
+
+
+What about using a model based approach? If the outfits were *random* (given the choices) then we'd expect each to occur independently of one another (i.e., the chance of one outfit is independent of any other).
+
+Let's consider the first leg, defining the *events* mathematically we let $\{X_1, X_2, \ldots, X_n\}$ be the outfits taking values in  $\{\text{Blue}, \text{Green}, \text{Pink}, \text{Yellow}\}$ (i.e., four possible categories).
+
+If the outfits were independent then we can write the likelihood as
+
+$$L_0(p; x) = \prod_{t=1}^{n} P(X_t = x_t) = \prod_{j=1}^{4} p_j^{n_j}$$.
+
+Here $p_j$ is the probability of observing category $j$, $n_j$ is the number of times category $j$ appears from $t=2$ to $n$, and $\sum_{j=1}^{k} p_j = 1$. The log-likelihood is therefore $$\log L_0(p;x) = \sum_{t=2}^{n} \log p_{x_t} = \sum_{j=1}^{4} n_j \log p_j$$.
+
+Calculating this in `R` *step-by-step*
+
+```{r}
+n <- length(first_leg)
+n
+k <- length(unique(first_leg))
+k
+chain <- as.factor(first_leg)
+chain
+p_indep <- table(chain) / n
+p_indep ## independent probabilities
+p_indep[as.integer(chain)] ## probabilities of each element as they occur
+p_indep[as.integer(chain)] |> log() ## log probabilities of each element as they occur
+ll0 <- p_indep[as.integer(chain)] |> log() |> sum() ## log likelihood
+ll0
+```
+
+
+Now, what about the likelihood if we assume the sequence of outfits is a first-order Markov chain (i.e.,  the current outfit $X_t$ depends on the previous one $X_{t-1}$):
+
+$$P(X_t = x_t \mid X_{t-1} = x_{t-1}) = P_{x_{t-1}, x_t}.$$
+
+Here $P_{i,j}$ is the probability of transitioning from state $i$ to state $j$, again with $\sum_{j=1}^{k} P_{i,j} = 1 \quad \text{for all } i$. We can write the likelihood as
+
+$$L_1(p;x_t|x_{t-1}) = \prod_{t=2}^{n} P(X_t = x_t \mid X_{t-1} = x_{t-1}) = \prod_{i=1}^{k} \prod_{j=1}^{k} P_{i,j}^{N_{i,j}}$$
+
+Where $N_{i,j}$ is the number of transitions from state $i$ to state $j$. The log-likelihood is then
+
+$$\log(L_1(p;x_t|x_{t-1})) = \sum_{t=2}^{n} \log (P_{x_{t-1}, x_t}) = \sum_{i=1}^{k} \sum_{j=1}^{k} N_{i,j} \log (P_{i,j})$$
+
+Calculating this in `R` *step-by-step*
+
+```{r}
+## transition probability matrix
+tm <- prop.table(transitions(first_leg), 1) ## over rows
+tm
+## using a for loop
+ll1 <- 0 ## initialise
+for(i in 2:n){
+  lli <- log(tm[chain[i-1], chain[i]]) ## element of tm
+  ll1 <- ll1 + lli
+}
+ll1 ## log likelihood assuming a first-order Markov chain
+## we can benchmark using the markovchain package 
+markovchain::markovchainFit(data = first_leg, method = "mle")$logLikelihood
+```
+
+
+Construction a likelihood ratio test statistic
+
+$$\Lambda = 2 \left( \log(L_1(p;x_t|x_{t-1}))  - \log(L_0(p; x)) \right)$$
+
+Under the NULL hypothesis $H_0$, the test statistic $\Lambda$ asymptotically follows a $\chi^2$ distribution with degrees of freedom $\text{df} = (k - 1)^2$.
+
+
+In `R`
+
+```{r}
+delta <- 2 * (ll1 - ll0)
+df <- (k - 1)^2
+p_val <- pchisq(delta, df, lower.tail = FALSE)
+```
+No evidence against the outfits being independent.
+
+```{r, echo = FALSE}
+#| fig-cap: "Distribution of the test statistic under the NULL hypothesis, the observed value shown in purple."
+chi <- data.frame(x = seq(0, 30, length.out = 100))
+chi$density <- dchisq(chi$x, df = df)
+chi %>%
+  ggplot(aes(x = x, y = density)) +
+  geom_line(linewidth = 2) +
+  geom_vline(aes(xintercept = delta), linetype = "dashed", color = "purple") +
+  labs(title = "",x = "", y = "") + theme_bw()
+```
+
+So, let's make a function.
+
+
+```{r}
+lrt <- function(x, plot = FALSE){
+  ## under H0
+  n <- length(x)
+  k <- length(unique(x))
+  chain <- as.factor(x)
+  p_indep <- table(chain) / n
+  ll0 <- p_indep[as.integer(chain)] |> log() |> sum() 
+  ## first-order Markov
+  tm <- prop.table(transitions(x), 1) 
+  ll1 <- 0 
+  for(i in 2:n){
+    lli <- log(tm[chain[i-1], chain[i]]) 
+    ll1 <- ll1 + lli
+  }
+  ## test statistic
+  delta <- 2 * (ll1 - ll0)
+  df <- (k - 1)^2
+  p_val <- pchisq(delta, df, lower.tail = FALSE)
+  if(plot){
+    chi <- data.frame(x = seq(0, 30, length.out = 100))
+    chi$density <- dchisq(chi$x, df = df)
+    chi %>%
+      ggplot(aes(x = x, y = density)) +
+      geom_line(linewidth = 2) +
+      geom_vline(aes(xintercept = delta), linetype = "dashed", color = "purple") +
+      labs(title = "",x = "", y = "") + theme_bw() -> p
+    print(p)
+  }
+  ## info to return
+  return(list("ll0" = ll0,
+              "ll1" = ll1,
+              "delta" = delta,
+              "df" = df,
+              "p.val" = p_val))
+}
+
+lrt(first_leg)
+lrt(mid_leg, plot = TRUE)
+lrt(final_leg, plot = TRUE)
+```
+
+
+**First order Markov chain?**
+
+So, might we believe that for the European leg of her tour Swift's outfits weren't random and perhaps what she wore one night depended on her outfit the previous night (i.e., in stats speak followed a first-order Markov chain)?
+
+:::{.callout-note}
+Basically, the first-order Markov property is that the future state of a system depends only on its current state and is independent of its past history.
+:::
+
+```{r, message = FALSE, warning = FALSE}
+require(markovchain)
+verifyMarkovProperty(mid_leg) ## no evidence against the Markov property p-value 0.834 (~likely a Markov chain?)
+markovchainFit(data = mid_leg, method = "mle") ## as above but with ses :)
+```
+
+
+**What about 1st vs 2nd Markov Chain**
+
+```{r}
+## Let's trick markovchain into doing this for us
+## by creating a "first order" chain which is actually of order 2
+
+snap <- data.frame(current = mid_leg)
+snap$future <- lead(snap$current, 1)
+snap$past <- lag(snap$current, 1)
+
+sec_order <- snap |>
+  filter(!is.na(future) & !is.na(past)) %>%
+  tidyr::unite("y_current", c("past", "current"), remove = FALSE) |>
+  mutate(y_next = lead(y_current, 1),
+         y_previous = lag(y_current, 1))
+
+ll1 <- markovchainFit(data = mid_leg, method = "mle")$logLikelihood
+ll1
+ll2 <- markovchainFit(data = sec_order$y_current, method = "mle")$logLikelihood
+ll2 ## eyeballing this, looks pretty similar to 1st order
+
+
+
+```
+
+
+For fun let's also calculate the 2nd order Markov Chain likelihood manually.
+
+```{r}
+## function to calculate the log likelihood assuming a second-order Markov chain
+ll2 <- function(x){
+  n <- length(x)
+  k <- length(unique(x))
+  chain <- as.factor(x)
+  ## Initialize 3D transition count array
+  counts <- array(0, dim = c(k, k, k))
+  int <- as.integer(chain)
+  for (t in 3:n) {
+    a <- int[t - 2]
+    b <- int[t - 1]
+    c <- int[t]
+    counts[a, b, c] <- counts[a, b, c] + 1
+    }
+  ## Calculate conditional probabilities
+  probs <- counts
+  for (a in 1:k) {
+    for (b in 1:k) {
+      total <- sum(counts[a, b, ])
+    if (total > 0) {probs[a, b, ] <- counts[a, b, ] / total}
+      }
+    }
+  ll <- 0
+  for (t in 3:n) {
+    a <- int[t - 2]
+    b <- int[t - 1]
+    c <- int[t]
+    p <- probs[a, b, c]
+    if (p > 0) {ll <- ll + log(p)}
+  }
+  return(ll)
+}
+## 2nd order Markov Chain log-likelihood
+ll2(mid_leg)
+
+```
