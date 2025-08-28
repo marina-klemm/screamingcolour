@@ -112,12 +112,13 @@ Adding arrows to the biplot let's us assess the degree of association between co
 ### Customising the biplot
 
 
-```{r}
+```{r, out.width = "100%"}
+#| message: FALSE
 ## rows - flip around so that dim 1 is "-ve --> +ve"
 coords <-  coa$row$coord  %*% diag(c(-1,1)) |> as.data.frame()
 colnames(coords) <- c("x","y")
 coords$count <- rowSums(cols.df)
-coords$colourGroup <- rownames(coords)  
+coords$colourGroup <- tolower(rownames(coords))
 coords$colourGroupHex <- colorPaletteGroups[coords$colourGroup]
 ## cols - flip around so that dim 1 is "-ve --> +ve"
 coos <-  coa$col$coord %*% diag(c(-1,1)) |> as.data.frame()
@@ -129,7 +130,6 @@ cols <- colorSentimentScores %>% select(colour, colourGroup) %>%
 
 dat <- left_join(cols, coords)
 dat$colorPaletteColours <- colorPaletteColours[dat$colour]
-
 
 ggplot(dat, aes(x = x, y = y,  group = colourGroup)) +
     geom_point(data = coords, aes(x = x, y = y, col = colourGroupHex), alpha = 0.4, size = 5, pch = 18) +

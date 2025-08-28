@@ -9,14 +9,9 @@ require(tidyverse)
 
 ```{r}
 #| message: FALSE
-require(tidytext)
-require(stringr)
 require(sentimentr)
-require(corrr)
-require(viridis)
-require(scales)
 require(taylor)
-
+require(ggrepel)
 ```
 
 ```{r}
@@ -63,9 +58,14 @@ albumOrder <- c("Taylor Swift", "Fearless (Taylor's Version)",
 lyrics_sentiment <- lyrics_sentiment %>%
   mutate(album_name = factor(album_name, levels = albumOrder))
 lyrics_sentiment <- lyrics_sentiment %>%
-  filter(!is.na(album_name)) 
+  filter(!is.na(album_name))
 
-## Then plot the net sentiment scores
+```
+
+
+```{r}
+
+## Plot the net sentiment scores
 ggplot(lyrics_sentiment, aes(x = track_number, y = avg_sentiment, fill = album_name)) +
   geom_col(show.legend = FALSE) +
   facet_wrap(~album_name, ncol = 3, scales = "free") +
@@ -82,14 +82,14 @@ ggplot(lyrics_sentiment, aes(x = track_number, y = avg_sentiment, fill = album_n
 
 ```{r}
 
-song_sentiments <- lyrics_sentiment %>%
-  group_by(album_name, track_name) %>%
-  summarise(
-    weighted_sentiment_lyric = sum(avg_sentiment * word_count, na.rm = TRUE) / sum(word_count, na.rm = TRUE),
-    total_words = sum(word_count, na.rm = TRUE),
+song_sentiment_scores_sentimentr <- lyrics_sentiment %>%
+  group_by(track_number, track_name, album_name) %>%
+  summarize(
+    sum_sentiment = sum(avg_sentiment),
+    total_sentiment_words = n(),
+    avg_sentiment = sum(avg_sentiment) / n(), 
     .groups = "drop"
-  ) %>%
-  filter(!is.na(weighted_sentiment_lyric))
+  )
 
 surpriseSongsDressColours <- surpriseSongsDressColours %>%
   mutate(DressColourGroup = case_when(
@@ -101,15 +101,14 @@ surpriseSongsDressColours <- surpriseSongsDressColours %>%
     DressName == "Green" ~ "Greens"
   ))
 
-dress_song_sentiments <- surpriseSongsDressColours %>%
-  left_join(song_sentiments, by = c("Song title" = "track_name")) %>%
-  filter(!is.na(weighted_sentiment_lyric))  
+dress_song_sentiment_scores_sentimentr <- surpriseSongsDressColours %>%
+  left_join(song_sentiment_scores_sentimentr, by = c("Song title" = "track_name")) %>%
+  filter(!is.na(avg_sentiment))  
 
-  
-dress_group_sentiments <- dress_song_sentiments %>%
+dress_group_sentiments <- dress_song_sentiment_scores_sentimentr %>%
   group_by(DressColourGroup) %>%
   summarise(
-    performance_weighted_sentiment = mean(weighted_sentiment_lyric, na.rm = TRUE),
+    performance_weighted_sentiment = mean(avg_sentiment, na.rm = TRUE),
     n_performances = n(),
     .groups = 'drop'
   )
@@ -121,85 +120,150 @@ dress_group_sentiments <- dress_song_sentiments %>%
 
 
 ```{r}
-colour_contigency_table <- tribble(
-  ~colour_category, ~negative, ~neutral, ~positive,
-  "Black And White", 2, 2, 0,
-  "Blacks", 3, 7, 3,
-  "Blues", 18, 7, 10,
-  "Colourful", 1, 3, 11,
-  "Greens", 0, 3, 8,
-  "Purples", 1, 1, 4,
-  "Reds", 15, 11, 13,
-  "Whites", 13, 12, 5,
-  "Yellows", 1, 9, 17
-)
+## recall the CA from before
+colorSentimentScores$colourGroup <- colorGroups[colorSentimentScores$colour]
+cols.df <- as.data.frame.matrix(table(colorSentimentScores$colourGroup, colorSentimentScores$meaning))
+coa <- FactoMineR::CA(cols.df)
+## here we flip so that dim 1 is "-ve --> +ve"
+colour_coa_table <- coa$row$coord %*% diag(c(-1,1)) |>
+  as.data.frame() |>
+  rownames_to_column("colour_category") |>
+  select(colour_category, colour_sentiment = V1) |>
+  as_tibble()
 
 
-
-colour_sentiments <- colour_contigency_table %>%
-  mutate(
-    total_mentions = negative + neutral + positive,
-    colour_weighted_sentiment = (positive * 1 + neutral * 0 + negative * -1) / total_mentions
-  ) %>%
-  # Map to dress colour groups
+colour_sentiments <- colour_coa_table %>%
   mutate(
     DressColourGroup = case_when(
-      colour_category == "Blues" ~ "Blues",
-      colour_category == "Colourful" ~ "Colourful", 
-      colour_category == "Greens" ~ "Greens",
-      colour_category == "Purples" ~ "Purples",
-      colour_category == "Reds" ~ "Reds",
-      colour_category == "Yellows" ~ "Yellows",
+      colour_category == "blues" ~ "Blues",
+      colour_category == "colorful" ~ "Colourful", 
+      colour_category == "greens" ~ "Greens",
+      colour_category == "purples" ~ "Purples",
+      colour_category == "reds" ~ "Reds",
+      colour_category == "yellows" ~ "Yellows",
       TRUE ~ NA_character_
     )
   ) %>%
   filter(!is.na(DressColourGroup))
 
+dress_group_sentiments <- dress_song_sentiment_scores_sentimentr %>%
+  group_by(DressColourGroup) %>%
+  summarise(
+    performance_weighted_sentiment = mean(avg_sentiment, na.rm = TRUE),
+    n_performances = n(),
+    .groups = 'drop'
+  )
 
 combined_analysis <- dress_group_sentiments %>%
   left_join(colour_sentiments, by = "DressColourGroup") %>%
-  select(DressColourGroup, performance_weighted_sentiment, colour_weighted_sentiment, n_performances, total_mentions)
-
+  select(DressColourGroup, performance_weighted_sentiment, colour_sentiment, n_performances)
 ```
 
+Let's plot.
 
-```{r}
-#| warning: FALSE
-ggplot(combined_analysis, aes(x = colour_weighted_sentiment, y = performance_weighted_sentiment)) +
-  theme_minimal(base_size = 16) +
-  geom_point(aes(size = n_performances, 
-                 color = DressColourGroup), 
-             alpha = 0.8,
-             stroke = 0.5) +
-  geom_text(aes(label = DressColourGroup), 
-            vjust = -2, 
-            hjust = 0.5,
-            size = 5,
-            show.legend = FALSE) +
-  scale_color_manual(values = colorPaletteGroups,
-                     name = "Dress Color\nGroup") +
-  guides(color = "none") +
-  scale_size_continuous(name = "Number of\nPerformances",
-                        range = c(3, 12),
-                        breaks = c(10, 20, 30, 40, 50),
-                        guide = guide_legend(override.aes = list(alpha = 0.8))) +
-  scale_x_continuous(labels = number_format(accuracy = 0.01),
-                     breaks = pretty_breaks(n = 6)) +
-  scale_y_continuous(labels = number_format(accuracy = 0.01),
-                     breaks = pretty_breaks(n = 6)) +
-  labs(
-    x = "Colour Sentiment in Lyrics",
-    y = "Performance Sentiment by Dress Colour Group",) +
+```{r, out.width = "100%"}
+song_performance_counts <- dress_song_sentiment_scores_sentimentr %>%
+  group_by(`Song title`, DressColourGroup) %>%
+  summarise(
+    avg_sentiment = first(avg_sentiment),  
+    performance_count = n(),              
+    .groups = 'drop'
+  )
+
+plot_data <- song_performance_counts %>%
+  left_join(colour_sentiments, by = "DressColourGroup") %>%
+  filter(!is.na(colour_sentiment))  
+
+
+## Top songs (highest sentiment) for each color group
+top_songs <- plot_data %>%
+  group_by(DressColourGroup) %>%
+  slice_max(avg_sentiment, n = 1, with_ties = FALSE) %>%
+  ungroup()
+
+## Bottom songs (lowest sentiment) for each color group  
+bottom_songs <- plot_data %>%
+  group_by(DressColourGroup) %>%
+  slice_min(avg_sentiment, n = 1, with_ties = FALSE) %>%
+  ungroup()
+
+## Medium songs (closest to median for each color group)
+medium_songs <- plot_data %>%
+  group_by(DressColourGroup) %>%
+  mutate(
+    median_sentiment = median(avg_sentiment, na.rm = TRUE),
+    distance_from_median = abs(avg_sentiment - median_sentiment)
+  ) %>%
+  slice_min(distance_from_median, n = 1, with_ties = FALSE) %>%  # Closest to median per color (medium)
+  ungroup()
+
+highlight_songs <- bind_rows(
+  top_songs,
+  bottom_songs,
+  medium_songs) %>%
+  distinct(`Song title`, DressColourGroup, .keep_all = TRUE)
+
+
+ggplot(plot_data, aes(x = colour_sentiment, y = avg_sentiment)) +
+   geom_point(aes(size = performance_count, colour = tolower(DressColourGroup)), 
+             alpha = 0.4, stroke = 0.8) +
+    geom_point(data = highlight_songs,
+             aes(size = performance_count, colour = tolower(DressColourGroup)), 
+             alpha = 0.9, stroke = 1.5) +
+    geom_text_repel(data = highlight_songs,
+                  aes(label = `Song title`, colour = tolower(DressColourGroup)), 
+                  size = 6, 
+                  max.overlaps = Inf,
+                  box.padding = 0.5,
+                  point.padding = 0.3,
+                  min.segment.length = 0.1,
+                  show.legend = FALSE) +
+  scale_size_continuous(name = "Performance\nCount", 
+                        range = c(2, 12),
+                        breaks = c(1, 2, 3, 4, 5),
+                        guide = guide_legend(override.aes = list(alpha = 1))) +
+  scale_colour_manual(values = colorPaletteGroups,
+                      name = "Dress colour\nGroup") +
+    labs(title = "",
+       subtitle = "",
+       x = "Dress Colour Sentiment",
+       y = "Lyric Sentiment",
+       caption = "") +
+  theme_minimal() +
   theme(
     plot.title = element_blank(),
     axis.title.x = element_text(size = 16, 
                                 margin = margin(t = 10)),
-    axis.title.y = element_text(size = 16, margin = margin(r = 10)),
+    axis.title.y = element_text(size = 16),
     axis.text = element_text(size = 14),
-    legend.title = element_text(size = 14),
-    legend.text = element_text(size = 13),
-    legend.position = "right",
-    legend.box = "vertical",
-    legend.margin = margin(l = 20),
-   plot.margin = margin(20, 20, 20, 20))
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 11),
+    legend.position = "bottom",
+    legend.box = "horizontal"
+  )
+
+
 ```
+
+
+What about group-wise correlation?
+
+```{r}
+
+## We only have 6 observations, not great, but let's go ahead anyway!
+## Pearson's correlation
+cor.test(combined_analysis$performance_weighted_sentiment, 
+                             combined_analysis$colour_sentiment)
+
+## Spearman's correlation
+cor.test(combined_analysis$performance_weighted_sentiment, 
+                             combined_analysis$colour_sentiment,
+                             method = "spearman")
+## Spearman's correlation with 95% CIs
+correlation::cor_test(data = combined_analysis,
+                      x = "performance_weighted_sentiment", 
+                      y = "colour_sentiment",
+                      method = "spearman")
+```
+
+
