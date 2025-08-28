@@ -183,6 +183,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./lyric_sentiments.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lyric Sentiments</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./references.html" class="sidebar-item-text sidebar-link">References</a>
   </div>
 </li>
@@ -196,11 +201,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#the-lore-dataset" id="toc-the-lore-dataset" class="nav-link active" data-scroll-target="#the-lore-dataset"><span class="toc-section-number">1.1</span>  The Lore dataset</a></li>
-  <li><a href="#sec-surp" id="toc-sec-surp" class="nav-link" data-scroll-target="#sec-surp"><span class="toc-section-number">1.2</span>  Surprise Songs Data Set</a>
+  <li><a href="#the-lore-dataset-with-neutral-feelings" id="toc-the-lore-dataset-with-neutral-feelings" class="nav-link" data-scroll-target="#the-lore-dataset-with-neutral-feelings"><span class="toc-section-number">1.2</span>  The Lore dataset with neutral feelings</a></li>
+  <li><a href="#sec-surp" id="toc-sec-surp" class="nav-link" data-scroll-target="#sec-surp"><span class="toc-section-number">1.3</span>  Surprise Songs Data Set</a>
   <ul class="collapse">
-  <li><a href="#an-overview-of-surprise-song-dresses-across-the-whole-tour" id="toc-an-overview-of-surprise-song-dresses-across-the-whole-tour" class="nav-link" data-scroll-target="#an-overview-of-surprise-song-dresses-across-the-whole-tour"><span class="toc-section-number">1.2.1</span>  An overview of surprise song dresses across the whole tour</a></li>
+  <li><a href="#an-overview-of-surprise-song-dresses-across-the-whole-tour" id="toc-an-overview-of-surprise-song-dresses-across-the-whole-tour" class="nav-link" data-scroll-target="#an-overview-of-surprise-song-dresses-across-the-whole-tour"><span class="toc-section-number">1.3.1</span>  An overview of surprise song dresses across the whole tour</a></li>
   </ul></li>
-  <li><a href="#simple-colour-sentiment-dataset" id="toc-simple-colour-sentiment-dataset" class="nav-link" data-scroll-target="#simple-colour-sentiment-dataset"><span class="toc-section-number">1.3</span>  Simple colour sentiment dataset</a></li>
   </ul>
 </nav>
     </div>
@@ -244,7 +249,7 @@ Note
 </div>
 <section id="the-lore-dataset" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="the-lore-dataset"><span class="header-section-number">1.1</span> The Lore dataset</h2>
-<p>The <a href="https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/album_info_metadata.xlsx"><code>album_info_metadata.xlsx</code></a> file includes the fan lore: sentiment, message, keywords, muse, color meaning, notes, secret messages, color mentions and their meanings (between positive, neutral or negative). The sentiments were chosen from a list of feelings compiled by the Hoffman Institute Foundation (May/2015 review). Soon it was realized that a single sentiment was not enough to completely differentiate between songs and the message and keywords were also created to add more information to single out a song. For example, while <em>Tim McGraw</em> and <em>Back to December</em> both have the overall <em>nostalgic</em> feeling, the first carries a <em>falling in love</em> message, while the latter is about <em>longing</em>. Likewise, <em>Tim McGraw</em> keywords are <em>romantic, first love, country music</em>, while <em>Back to December</em> keywords are <em>breakup, regretful, heartbreak</em>.</p>
+<p>The <a href="https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/album_info_metadata.xlsx"><code>album_info_metadata.xlsx</code></a> file includes the fan lore: sentiment, message, keywords, muse, color meaning, notes, secret messages, color mentions and their meanings (between positive or negative). The sentiments were chosen from a list of feelings compiled by the Hoffman Institute Foundation (May/2015 review). Soon it was realized that a single sentiment was not enough to completely differentiate between songs and the message and keywords were also created to add more information to single out a song. For example, while <em>Tim McGraw</em> and <em>Back to December</em> both have the overall <em>nostalgic</em> feeling, the first carries a <em>falling in love</em> message, while the latter is about <em>longing</em>. Likewise, <em>Tim McGraw</em> keywords are <em>romantic, first love, country music</em>, while <em>Back to December</em> keywords are <em>breakup, regretful, heartbreak</em>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"raw_data/album_info_metadata.xlsx"</span>)[,<span class="dv">1</span><span class="sc">:</span><span class="dv">29</span>]</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>allSongsMetadata </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -272,15 +277,73 @@ Note
 </div>
 </div>
 </section>
-<section id="sec-surp" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="sec-surp"><span class="header-section-number">1.2</span> Surprise Songs Data Set</h2>
+<section id="the-lore-dataset-with-neutral-feelings" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="the-lore-dataset-with-neutral-feelings"><span class="header-section-number">1.2</span> The Lore dataset with neutral feelings</h2>
+<p>After compiling the first lore database, we realized that the mention of colors had more nuanced meaning than just a dicotomial division between “positive” or “negative”. Take the lyrics: * <em>Drowning in the <strong>Blue Nile</strong>, he sent me ‘Downtown Lights’</em> * <em>You cinephile in <strong>black and white</strong>, all those plot twists and dynamite</em> * <em>My old <strong>blue</strong> jeans</em> * <em>I stracth your head, you fall asleep, like a tattoed <strong>golden</strong> retriever</em></p>
+<p>To us, the examples above show usage of color as a purely discriptive adjective classifying a noun; there is no positive or negative feeling added in the qualifier, which contrasts to these examples: * <em>We’re so sad, we paint the town <strong>blue</strong> </em>(negative) * <em>The rest of the world was <strong>black and white</strong> but we were in screaming color</em> (negative) * <em>I searched autora borealis green</em> (positive) * <em>It’s like your eyes are liquor, it’s like your body is <strong>gold</strong> </em>(positive)</p>
+<p>Therefore, the <a href="https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/album_info_metadata_neutral.xlsx"><code>album_info_metadata_neutral.xlsx</code></a> file is a slight improvement from the original lore with <em>posivive and/or negative</em> being replaced by <em>neutral</em> where it felt appropriated.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> <span class="st">"raw_data/album_info_metadata_neutral.xlsx"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(allSongsMetadata, <span class="at">sheet =</span> <span class="st">"metadata"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"code/colour_palletts.r"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>rawColorData <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_MK, <span class="st">";"</span>))),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">meaning =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_meaningMK, <span class="st">";"</span>)))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(colour) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(meaning))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>colorSentimentScores <span class="ot">&lt;-</span> rawColorData <span class="sc">%&gt;%</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">meaning =</span> <span class="fu">trimws</span>(meaning),  </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">score =</span> <span class="fu">case_when</span>(</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"positive"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"neutral"</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"negative"</span> <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Calculate average sentiment for each individual color</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>individualColorSentiments <span class="ot">&lt;-</span> colorSentimentScores <span class="sc">%&gt;%</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(colour) <span class="sc">%&gt;%</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">avgSentiment =</span> <span class="fu">mean</span>(score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">mentionCount =</span> <span class="fu">n</span>()</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourGroup <span class="ot">&lt;-</span> colorGroups[individualColorSentiments<span class="sc">$</span>colour]</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourHexColour <span class="ot">&lt;-</span><span class="fu">sapply</span>(individualColorSentiments<span class="sc">$</span>colour, \(x) colorPaletteColours[[x]])</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourGroupColour <span class="ot">&lt;-</span><span class="fu">sapply</span>(individualColorSentiments<span class="sc">$</span>colourGroup, \(x) colorPaletteGroups[[x]])</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>individualColorSentiments</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 69 × 6
+   colour                avgSentiment mentionCount colourGroup   colourHexColour
+   &lt;chr&gt;                        &lt;dbl&gt;        &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;          
+ 1 amber                        0                1 yellows       #FFBF00        
+ 2 aquamarine                   1                1 blues         #7FFFD4        
+ 3 aurora borealis green        1                2 greens        #78E08F        
+ 4 black                        0                9 blacks        #000000        
+ 5 black and white             -0.5              4 black and wh… #C0C0C0        
+ 6 blackout                     1                1 blacks        #1A1A1A        
+ 7 bleached                     0                1 whites        #F5F5DC        
+ 8 blood monlit                 1                1 reds          #8A0303        
+ 9 blood-soaked                -1                2 reds          #8B0000        
+10 blue                        -0.182           22 blues         #0000FF        
+# ℹ 59 more rows
+# ℹ 1 more variable: colourGroupColour &lt;chr&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="sec-surp" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="sec-surp"><span class="header-section-number">1.3</span> Surprise Songs Data Set</h2>
 <p>Parallel to the development of the metadata (aka lore) database, a few details about each surprise song performance were noted down in the <a href="https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/surprise_songs.xlsx"><code>surprise_songs.xlsx</code></a> data set. Each concert had a few rows, one per surprise song (Taylor performed two surprise songs in each of the concerts, the first one on the guitar and the second one on the piano). Besides the two regular surprise songs, she occasionally started mashing up songs in this acoustic set; although the first mashup happened in her second night in Ohio (July 1st, 2023), they became more common from the second night of her Melbourne concert (February 17th, 2024). Thus, three columns account for it: Mashups, with the options none, one or two; <code>Mashup</code>, with the name of the first song mashed up with Song title; and, <code>Mashup2</code>, with yet a third song that was mashed up with Song title and Mashup (in the case of Mashups = Two).</p>
 <p>Besides the song titles and mashups, the surprise songs data set includes the names of the city, state, country, stadium and dates in which she performed. Moreover, the name of the dress she was wearing is included in the column <code>DressName</code>, and its color in descriptive terms is found on <code>Colour1</code>, its HEX formatting on <code>ColourHex1</code>, and its RGB formatting on <code>ColourRGB1</code>. As some dresses like <em>Flamingo pink</em> and <em>Sunset orange</em> are made up of an ombre of two colors, their name and codes are also found on <code>Colour2</code>, <code>ColourHex2</code> and <code>ColourRGB2</code>. Lastly, other details are also included: who she was dating at the time in the <code>Relationship</code> column; which leg of the tour (First legs, European, Final leg), which night on that city, which instrument she played while singing said song, special guests in the audience, and notes for overall remarks such as: <em>on July 9th, she sang Last Kiss as one the surprise songs, and that date is mentioned on the song</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">## reading in data</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours <span class="ot">&lt;-</span>  readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"raw_data/surprise_songs.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"List"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(surpriseSongsDressColours<span class="sc">$</span>Date)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## reading in data</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours <span class="ot">&lt;-</span>  readxl<span class="sc">::</span><span class="fu">read_excel</span>(<span class="st">"raw_data/surprise_songs.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"List"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(surpriseSongsDressColours<span class="sc">$</span>Date)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>surpriseSongsDressColours</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 443 × 26
    `Song title`         Mashups Mashup Mashup2 Guest City  State Country Stadium
@@ -303,18 +366,18 @@ Note
 #   `Special Annoucement` &lt;chr&gt;, Notes &lt;chr&gt;</code></pre>
 </div>
 </div>
-<section id="an-overview-of-surprise-song-dresses-across-the-whole-tour" class="level3" data-number="1.2.1">
-<h3 data-number="1.2.1" class="anchored" data-anchor-id="an-overview-of-surprise-song-dresses-across-the-whole-tour"><span class="header-section-number">1.2.1</span> An overview of surprise song dresses across the whole tour</h3>
+<section id="an-overview-of-surprise-song-dresses-across-the-whole-tour" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="an-overview-of-surprise-song-dresses-across-the-whole-tour"><span class="header-section-number">1.3.1</span> An overview of surprise song dresses across the whole tour</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Need only consider first element of each concerts as the</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="do">## same outfit was worn for all surprise songs</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="do">## for anyone concert</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert <span class="ot">&lt;-</span> surpriseSongsDressColours <span class="sc">%&gt;%</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Date) <span class="sc">%&gt;%</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(Date, Order) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Need only consider first element of each concerts as the</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="do">## same outfit was worn for all surprise songs</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="do">## for anyone concert</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert <span class="ot">&lt;-</span> surpriseSongsDressColours <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Date) <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(Date, Order) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>oneRowPerConcert</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 147 × 26
    `Song title`         Mashups Mashup Mashup2 Guest City  State Country Stadium
@@ -337,68 +400,12 @@ Note
 #   `Special Annoucement` &lt;chr&gt;, Notes &lt;chr&gt;</code></pre>
 </div>
 </div>
-</section>
-</section>
-<section id="simple-colour-sentiment-dataset" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="simple-colour-sentiment-dataset"><span class="header-section-number">1.3</span> Simple colour sentiment dataset</h2>
-<p>The <a href="https://github.com/cmjt/studyinswift/blob/cmjt/raw_data/album_info_metadata_neutral.xlsx"><code>album_info_metadata_neutral.xlsx</code></a> dataset…</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> <span class="st">"raw_data/album_info_metadata_neutral.xlsx"</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>allSongsMetadata <span class="ot">&lt;-</span> readxl<span class="sc">::</span><span class="fu">read_excel</span>(allSongsMetadata, <span class="at">sheet =</span> <span class="st">"metadata"</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"code/colour_palletts.r"</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>rawColorData <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_MK, <span class="st">";"</span>))),</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">meaning =</span> <span class="fu">trimws</span>(<span class="fu">unlist</span>(<span class="fu">strsplit</span>(allSongsMetadata<span class="sc">$</span>colour_meaningMK, <span class="st">";"</span>)))</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(colour) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(meaning))</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>colorSentimentScores <span class="ot">&lt;-</span> rawColorData <span class="sc">%&gt;%</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">meaning =</span> <span class="fu">trimws</span>(meaning),  </span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">score =</span> <span class="fu">case_when</span>(</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"positive"</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"neutral"</span> <span class="sc">~</span> <span class="fl">0.5</span>,</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">tolower</span>(meaning) <span class="sc">==</span> <span class="st">"negative"</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_real_</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="do">## Calculate average sentiment for each individual color</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>individualColorSentiments <span class="ot">&lt;-</span> colorSentimentScores <span class="sc">%&gt;%</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(colour) <span class="sc">%&gt;%</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">avgSentiment =</span> <span class="fu">mean</span>(score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">mentionCount =</span> <span class="fu">n</span>()</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourGroup <span class="ot">&lt;-</span> colorGroups[individualColorSentiments<span class="sc">$</span>colour]</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourHexColour <span class="ot">&lt;-</span><span class="fu">sapply</span>(individualColorSentiments<span class="sc">$</span>colour, \(x) colorPaletteColours[[x]])</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>individualColorSentiments<span class="sc">$</span>colourGroupColour <span class="ot">&lt;-</span><span class="fu">sapply</span>(individualColorSentiments<span class="sc">$</span>colourGroup, \(x) colorPaletteGroups[[x]])</span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>individualColorSentiments</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 69 × 6
-   colour                avgSentiment mentionCount colourGroup   colourHexColour
-   &lt;chr&gt;                        &lt;dbl&gt;        &lt;int&gt; &lt;chr&gt;         &lt;chr&gt;          
- 1 amber                        0.5              1 yellows       #FFBF00        
- 2 aquamarine                   1                1 blues         #7FFFD4        
- 3 aurora borealis green        1                2 greens        #78E08F        
- 4 black                        0.5              9 blacks        #000000        
- 5 black and white              0.25             4 black and wh… #C0C0C0        
- 6 blackout                     1                1 blacks        #1A1A1A        
- 7 bleached                     0.5              1 whites        #F5F5DC        
- 8 blood monlit                 1                1 reds          #8A0303        
- 9 blood-soaked                 0                2 reds          #8B0000        
-10 blue                         0.409           22 blues         #0000FF        
-# ℹ 59 more rows
-# ℹ 1 more variable: colourGroupColour &lt;chr&gt;</code></pre>
-</div>
-</div>
 <div class="cell">
 
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

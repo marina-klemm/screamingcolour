@@ -13,7 +13,8 @@ require(tidyverse)
 require(corrplot)
 require(FactoMineR)
 require(factoextra)
-library(ggalluvial)
+require(ggrepel)
+require(ggalluvial)
 ```
 
 
@@ -108,6 +109,44 @@ fviz_ca_biplot(coa, repel = TRUE, col.col = "brown", col.row = "purple",
 
 Adding arrows to the biplot let's us assess the degree of association between colours and sentiments. Again, this is not a typical scatter plot! An acute angle between two arrows indicates a strong association between the corresponding row (colour) and column (sentiment). From the plot above *Purples* have the strongest association with *Positive* sentiment, *Reds* & *Blues* with *Negative* and *Blacks* with *Neutral*. In summary, acute angles between *colours* and *sentiment* suggest positive association, right angles suggest independence, and obtuse angles suggest negative association.
 
+### Customising the biplot
+
+
+```{r}
+## rows - flip around so that dim 1 is "-ve --> +ve"
+coords <-  coa$row$coord  %*% diag(c(-1,1)) |> as.data.frame()
+colnames(coords) <- c("x","y")
+coords$count <- rowSums(cols.df)
+coords$colourGroup <- rownames(coords)  
+coords$colourGroupHex <- colorPaletteGroups[coords$colourGroup]
+## cols - flip around so that dim 1 is "-ve --> +ve"
+coos <-  coa$col$coord %*% diag(c(-1,1)) |> as.data.frame()
+colnames(coos) <- c("x","y")
+coos$sent <- str_to_title(rownames(coos)) 
+
+cols <- colorSentimentScores %>% select(colour, colourGroup) %>%
+    group_by(colourGroup) %>% mutate(count = n()) %>% ungroup() |> unique()
+
+dat <- left_join(cols, coords)
+dat$colorPaletteColours <- colorPaletteColours[dat$colour]
+
+
+ggplot(dat, aes(x = x, y = y,  group = colourGroup)) +
+    geom_point(data = coords, aes(x = x, y = y, col = colourGroupHex), alpha = 0.4, size = 5, pch = 18) +
+    geom_segment(data = coords, aes(x = 0, y = 0, xend = x, yend = y, col = colourGroupHex),
+                 inherit.aes = FALSE,
+               arrow = arrow(length = unit(0.3, "cm")), alpha = 0.3) +
+    geom_text_repel(aes(label = colour, col = colorPaletteColours),
+                    max.overlaps = 100, box.padding = 0.1, segment.alpha = 0.3) +
+    geom_text(data = coos, aes(x = x, y = y, label = sent), inherit.aes = FALSE, size = 5, col = "darkgrey") +
+    geom_vline(xintercept = 0, linetype = "dashed", color = "gray", linewidth = 0.5) +
+      geom_hline(yintercept = 0, linetype = "dashed", color = "gray", linewidth = 0.5) +
+    theme_bw() + scale_color_identity() +
+    theme(panel.background = element_rect(fill = "oldlace", color = NA),
+          axis.line.x = element_blank(), panel.border = element_blank()) +
+    xlab("Dim 1 (82.5%)") + ylab("Dim 2 (17.5%)")  + coord_fixed()
+
+```
 
 ### Reducing dimensions
 

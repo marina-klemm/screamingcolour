@@ -12,6 +12,7 @@ book:
     - viz.qmd
     - outfit_transitions.qmd
     - colour_sentiments.qmd
+    - lyric_sentiments.qmd
     - references.qmd
 
 bibliography: references.bib
