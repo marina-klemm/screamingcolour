@@ -1,4 +1,4 @@
-# Screaming Colors: A Swiftie Guide to Eras Tour Stats {.unnumbered}
+# Screaming Colour: A Swiftie Guide to Eras Tour Stats {.unnumbered}
 
 *A short collection of visualization and `R`stats exercises exploring Taylor Swift's use of colour in her Eras tour outfits and her lyrics!*
 
