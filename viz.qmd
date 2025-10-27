@@ -8,7 +8,7 @@ require(tidyverse)
 ```
 
 :::{.callout-note}
-Again, please note that data paths are relative to the root of [the GitHub repository](https://github.com/cmjt/studyinswift)
+Again, please note that data paths are relative to the root of [the GitHub repository](https://github.com/marina-klemm/screamingcolour)
 :::
 :::{.callout-warning}
 This chapter requires data from @sec-surp to be loaded!
@@ -30,7 +30,7 @@ require(cowplot)
 ## map hex colour to outfit
 dressColorMapping <- unique(surpriseSongsDressColours %>% select(DressName, ColourHex1))
 colorPaletteDresses <- setNames(dressColorMapping$ColourHex1, dressColorMapping$DressName)
-pathToDressColours <- "dress_images/images_high_res/cropped/"
+pathToDressColours <- "dress_drawings/"
 ## map outfits to the corresponding images
 oneRowPerConcert %>%
     count(DressName) %>%
@@ -215,8 +215,9 @@ surpriseSongsDressColours$groupName <- sapply(surpriseSongsDressColours$DressNam
   if (color %in% c("Pink", "Flamingo pink")) return("reds")
   if (color %in% c("Green")) return("greens")
   if(color %in% c("Yellow", "Sunset orange")) return("yellows")
-  if (color %in% c("Ocean blue", "Blue", "Blurple")) return ("blues")
+  if (color %in% c("Ocean blue", "Blue")) return ("blues")
   if (color %in% c("Popsicle", "Cotton candy", "Grapefruit")) return ("colorful")
+  if (color %in% c("Blurple")) return("purples")
   return("Neutral")
 })
 
@@ -231,56 +232,87 @@ songs_with_single_color_group <- surpriseSongsDressColours %>%
   arrange(desc(total_performances))
 
 single_color_performances <- surpriseSongsDressColours %>%
-    filter(`Song title` %in% songs_with_single_color_group$`Song title`)
+  filter(`Song title` %in% songs_with_single_color_group$`Song title`)
 
 ## pics
-blues <- paste("dress_images/images_high_res/cropped/", c("blue", "ocean_blue", "blurple"), ".jpg", sep = "")
-reds <- paste("dress_images/images_high_res/cropped/", c("pink", "flamingo_pink"), ".jpg", sep = "")
-yellows <- paste("dress_images/images_high_res/cropped/", c("yellow", "sunset_orange"), ".jpg", sep = "")
+blues <- paste("dress_drawings/", c("blue", "Ocean blue"), ".png", sep = "")
+reds <- paste("dress_drawings/", c("pink", "Flamingo pink"), ".png", sep = "")
+yellows <- paste("dress_drawings/", c("yellow", "Sunset orange"), ".png", sep = "")
 
 coords <- circleProgressiveLayout(table(single_color_performances$groupName),
                                   sizetype = 'area')
 coords$id <- names(table(single_color_performances$groupName))
-df.gg <- circleLayoutVertices(coords, npoints = 8, id = 4)
-snames <- single_color_performances %>% select('Song title', groupName) %>%
-    group_by(`Song title`) %>% mutate(count = n()) %>% ungroup() |> unique()
-set.seed(1984) ## for jitter repel
-plot <- ggplot() + theme_void() +
-    ## blues
-    geom_polygon(data = df.gg[df.gg$id == "blues",], aes(x = x, y = y),
-                 fill = "#0000FF", alpha = 0.05) +
-    geom_text_repel(aes(x = coords$x[1], 
-                        y = coords$y[1], 
-                        label = snames$`Song title`[snames$groupName == "blues"]),
-                    col = "#0000FF", nudge_y = -1.1, nudge_x = 0.1, segment.color = NA,
-                    size = 1.5*snames$count[snames$groupName == "blues"], box.padding = 0.1) +
-    ## reds
-    geom_polygon(data = df.gg[df.gg$id == "reds",], aes(x = x, y = y),
-                 fill = "#FF0000", alpha = 0.05)  +
-    geom_text_repel(aes(x = coords$x[2], 
-                        y = coords$y[2], 
-                        label = snames$`Song title`[snames$groupName == "reds"]),
-                    col = "#FF0000", nudge_y = -0.9, nudge_x = 0.1, segment.color = NA,
-                    size = 1.5*snames$count[snames$groupName == "reds"], box.padding = 0.1) +
-    ## yellows
-    geom_polygon(data = df.gg[df.gg$id == "yellows",], aes(x = x, y = y),
-                 fill = "#FFD700", alpha = 0.05)  +
-    geom_text_repel(aes(x = coords$x[3], 
-                        y = coords$y[3], 
-                        label = snames$`Song title`[snames$groupName == "yellows"]),
-                    col = "#FFD700", nudge_y = 1.4, nudge_x = 0, segment.color = NA,
-                    size = 1.5*snames$count[snames$groupName == "yellows"], box.padding = 0.1)
 
-## image sizes relative to
-## table(single_color_performances$DressName, single_color_performances$groupName)
-set.seed(1984) ## for jitter repel
+df.gg <- circleLayoutVertices(coords, npoints = 8, id = 4)
+
+snames <- single_color_performances %>% select('Song title', groupName) %>%
+  group_by(`Song title`) %>% mutate(count = n()) %>% ungroup() |> unique()
+
+set.seed(1989) ## for jitter repel
+
+plot <- ggplot() + theme_void() +
+  ## blues
+  geom_polygon(data = df.gg[df.gg$id == "blues",], aes(x = x, y = y),
+               fill = "#0000FF", alpha = 0.05) +
+  geom_text_repel(aes(x = coords$x[coords$id == "blues"], 
+                      y = coords$y[coords$id == "blues"], 
+                      label = snames$`Song title`[snames$groupName == "blues"]),
+                  col = "navy", 
+                  nudge_y = -0.9, 
+                  nudge_x = 0.05, 
+                  segment.color = NA,
+                  size = 1.9*snames$count[snames$groupName == "blues"], 
+                  box.padding = 0.05,
+                  max.overlaps = 30,
+                  force = 0.5,
+                  direction = "y") +
+  ## reds
+  geom_polygon(data = df.gg[df.gg$id == "reds",], aes(x = x, y = y),
+               fill = "#FF0000", alpha = 0.05)  +
+  geom_text_repel(aes(x = coords$x[coords$id == "reds"], 
+                      y = coords$y[coords$id == "reds"], 
+                      label = snames$`Song title`[snames$groupName == "reds"]),
+                  col = "firebrick", 
+                  nudge_y = -0.7, 
+                  nudge_x = 0.05, 
+                  segment.color = NA,
+                  size = 1.9*snames$count[snames$groupName == "reds"], 
+                  box.padding = 0.05,
+                  max.overlaps = 30,
+                  force = 0.5,
+                  direction = "y") +
+  ## yellows
+  geom_polygon(data = df.gg[df.gg$id == "yellows",], aes(x = x, y = y),
+               fill = "#FFD700", alpha = 0.05)  +
+  geom_text_repel(aes(x = coords$x[coords$id == "yellows"], 
+                      y = coords$y[coords$id == "yellows"], 
+                      label = snames$`Song title`[snames$groupName == "yellows"]),
+                  col = "goldenrod", 
+                  nudge_y = 1.2, 
+                  nudge_x = 0, 
+                  segment.color = NA,
+                  size = 1.9*snames$count[snames$groupName == "yellows"], 
+                  box.padding = 0.05,
+                  max.overlaps = 30,
+                  force = 0.5,
+                  direction = "y")
+
+# Improved dress scaling - slightly smaller to fit better
+get_dress_scale <- function(dress_name) {
+  counts <- c("Blue" = 2, "Ocean blue" = 4, "Pink" = 8, 
+              "Flamingo pink" = 7, "Yellow" = 7, "Sunset orange" = 11)
+  base_scale <- 0.11
+  scale_factor <- 0.012
+  return(base_scale + (counts[dress_name] * scale_factor))
+}
+
+# Final plot with adjusted dress positions
 ggdraw() +
-    draw_plot(plot) +
-    draw_image(blues[1], -0.37, 0.23, scale = 0.5/3) +
-    draw_image(blues[2],  -0.2, 0.32, scale = 0.8/3) +
-    draw_image(blues[3],  -0.07, 0.26, scale = 0.4/3) +
-    draw_image(reds[1], 0.1, 0.27, scale = 0.8/3) +
-    draw_image(reds[2],  0.3, 0.33, scale = 0.7/3) +
-    draw_image(yellows[1], -0.1, -0.25, scale = 0.7/3) +
-    draw_image(yellows[2],  0.1, -0.3, scale = 1.1/3) 
+  draw_plot(plot) +
+  draw_image(blues[1],  -0.23, 0.34, scale = get_dress_scale("Blue")) +
+  draw_image(blues[2], -0.35, 0.25, scale = get_dress_scale("Ocean blue")) +
+  draw_image(reds[1], 0, 0.19, scale = get_dress_scale("Pink")) +
+  draw_image(reds[2], 0.32, 0.35, scale = get_dress_scale("Flamingo pink")) +
+  draw_image(yellows[1], -0.28, -0.26, scale = get_dress_scale("Yellow")) +
+  draw_image(yellows[2], -0.010, -0.33, scale = get_dress_scale("Sunset orange"))
 ```
