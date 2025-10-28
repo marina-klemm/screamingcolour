@@ -171,6 +171,11 @@ order of appearance.
 <td>Lover</td>
 </tr>
 <tr>
+<td>begin again</td>
+<td>Begin Again</td>
+<td>Red</td>
+</tr>
+<tr>
 <td>scheme like a criminal</td>
 <td>Mastermind</td>
 <td>Midnights</td>
@@ -187,7 +192,7 @@ order of appearance.
 </tr>
 <tr>
 <td>she laid the groundwork and then, just like clockwork the
-dominoes…</td>
+dominoes cascaded in a line</td>
 <td>Mastermind</td>
 <td>Midnights</td>
 </tr>
