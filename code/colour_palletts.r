@@ -218,4 +218,14 @@ colorPaletteGroups <- c(
   "colorful" = "#FF4500",
   "purples" = "#8A2BE2"
 )
+
+
+colourGroupPalette <- c(
+  "blues" = "#5A8BC8",      
+  "reds" = "#D17A8A",       
+  "purples" = "#A675C8",  
+  "greens" = "#7AB87A",     
+  "yellows" = "#E6C470",    
+  "colourful" = "#D19A70"
+)
   

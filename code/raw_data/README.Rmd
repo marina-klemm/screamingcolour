@@ -1,0 +1,31 @@
+---
+title: ''
+output: md_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## File overview
+
+```bash
+tree -I "README.*"
+.
+├── album_info_metadata_neutral.xlsx
+├── album_info_metadata.xlsx
+├── sentimentGroups.xlsx
+├── surpriseSongsDressColoursMashupsLong.xlsx
+├── surprise_songs.xlsx
+└── taylorAlbumSongs.xlsx
+
+0 directories, 6 files
+```
+
+
+```{r data, message = FALSE}
+library(readxl)
+files <- list.files(pattern = ".xlsx")
+## key info on first sheet of all files
+lapply(files, read_xlsx)
+```
